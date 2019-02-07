@@ -7,7 +7,6 @@
 
 
 #define ll long long
-#define str std::string
 #define vec std::vector
 #define uset std::unordered_set
 
