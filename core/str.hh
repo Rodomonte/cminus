@@ -10,6 +10,7 @@ struct str : std::string {
   str(){}
   str(const char* s): std::string(s) {}
   str(std::string s){ *this = s; }
+  str* clone(){} //!
 
   str lcsseq(const str& o){
 

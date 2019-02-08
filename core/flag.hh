@@ -9,9 +9,9 @@
 struct flag : type {
   static mem registry;
 
-  flag(){}
+  flag(){} //!
   flag(bool _val){} //!
-  flag* clone(){ return this; } //!
+  flag clone(){ return flag(); }
 
   str _string(){
     return ""; //!

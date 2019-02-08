@@ -1,7 +1,7 @@
-// TIME
+// STAMP
 
-#ifndef time_hh
-#define time_hh
+#ifndef stamp_hh
+#define stamp_hh
 
 #include "type.hh"
 
@@ -11,7 +11,7 @@ struct stamp : type {
 
   stamp(){}
   stamp(ll _clock): clock(_clock) {}
-  stamp* clone(){ return this; } //!
+  stamp clone(){ return stamp(); }
 
   bool operator==(const stamp& o){ return clock == o.clock; }
   bool operator< (const stamp& o){ return clock < o.clock; }

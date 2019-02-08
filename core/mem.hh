@@ -10,7 +10,7 @@ struct mem : type {
   vec<char> block;
 
   mem(){}
-  mem* clone(){ return this; } //!
+  mem clone(){ return mem(); }
 
   str _string(){
     return ""; //!

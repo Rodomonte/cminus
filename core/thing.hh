@@ -3,7 +3,8 @@
 #ifndef thing_hh
 #define thing_hh
 
-#include "time.hh"
+#include "stat.hh"
+#include "stamp.hh"
 #include "num.hh"
 #include "str.hh"
 #include "../db/db.hh"
@@ -17,14 +18,25 @@ struct Thing : type { // ABSTRACT
     creation = last_upd = clock();
   }
 
-  virtual void _upd(){};
-  virtual void _upd(stamp time){ _upd(); }
-  virtual void upd(ll time) final {
+  virtual stat _upd(){ return stat(PASS); };
+  virtual stat _upd(stamp time){ return _upd(); }
+  virtual stat upd(ll time) final {
     stamp ts(time);
-    if(ts > last_upd) last_upd = ts, _upd(ts);
+    if(ts > last_upd){
+      last_upd = ts;
+      return _upd(ts);
+    }
     //! log to db
+    return stat(PASS);
   }
-  virtual void upd() final { upd(clock()); }
+  virtual void upd() final { return upd(clock()); }
+
+  virtual stat _validate() = 0;
+  virtual stat validate() final {
+    if(creation > last_upd || creation > last_vld || creation > last_act)
+      return stat(KILL);
+    return _validate();
+  }
 
   num hash(){
     return num(creation.clock);
