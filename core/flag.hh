@@ -11,7 +11,12 @@ struct flag : type {
 
   flag(){} //!
   flag(bool _val){} //!
-  flag clone(){ return flag(); }
+
+  flag* clone(){ cl_flag.pb(*this); return &cl_flag.back(); } //!
+
+  flag& operator=(const flag& o){ //!
+    return *this;
+  }
 
   str _string(){
     return ""; //!

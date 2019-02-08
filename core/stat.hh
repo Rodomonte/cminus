@@ -6,6 +6,7 @@
 #include "type.hh"
 
 
+//! Perhaps no enum, instead global static stats
 enum CODE {
   PASS
 , KILL
@@ -18,14 +19,13 @@ struct stat : type {
 
   stat(){}
   stat(CODE _code): code(_code) {}
-  stat* clone(){
-    MEM.pb(stat()); //!
-    return &MEM.back();
-  }
+
+  stat* clone(){ cl_stat.pb(*this); return &cl_stat.back(); }
 
   str _string(){
     return ""; //!
   }
+
   str serialize(){
     return ""; //!
   }

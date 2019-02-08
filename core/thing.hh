@@ -18,6 +18,8 @@ struct Thing : type { // ABSTRACT
     creation = last_upd = clock();
   }
 
+  Thing* clone(){ cl_thing.pb(*this); return &cl_thing.back(); }
+
   virtual stat _upd(){ return stat(PASS); };
   virtual stat _upd(stamp time){ return _upd(); }
   virtual stat upd(ll time) final {
@@ -29,18 +31,23 @@ struct Thing : type { // ABSTRACT
     //! log to db
     return stat(PASS);
   }
-  virtual void upd() final { return upd(clock()); }
+  virtual stat upd() final { return upd(clock()); }
 
-  virtual stat _validate() = 0;
+  virtual stat _validate(){};
   virtual stat validate() final {
     if(creation > last_upd || creation > last_vld || creation > last_act)
       return stat(KILL);
     return _validate();
   }
 
-  num hash(){
-    return num(creation.clock);
-  };
+  str _string(){
+    return ""; //!
+  }
+
+  //! involve rand
+  str serialize(){
+    return creation._string();
+  }
 };
 
 

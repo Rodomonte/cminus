@@ -9,6 +9,7 @@
 #define ll long long
 #define vec std::vector
 #define uset std::unordered_set
+#define iter iterator
 
 #define pb push_back
 #define pf push_front

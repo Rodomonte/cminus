@@ -7,14 +7,16 @@
 
 
 struct mem : type {
-  vec<char> block;
+  vec<ll> block;
 
   mem(){}
-  mem clone(){ return mem(); }
+
+  mem* clone(){ cl_mem.pb(*this); return &cl_mem.back(); }
 
   str _string(){
     return ""; //!
   }
+
   str serialize(){
     return ""; //!
   }
