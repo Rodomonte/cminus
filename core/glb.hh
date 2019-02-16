@@ -32,6 +32,9 @@ vec<num> cl_num;
 struct str;
 vec<str> cl_str;
 
+struct cube;
+vec<cube> cl_cube;
+
 struct Thing;
 vec<Thing> cl_thing;
 
