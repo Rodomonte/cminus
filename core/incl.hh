@@ -7,6 +7,7 @@
 //#include <unistd.h>
 //#include <windows.h>
 
+#include <limits.h>
 #include <time.h>
 #include <pthread.h>
 #include <sys/socket.h>
