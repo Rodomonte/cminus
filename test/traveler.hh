@@ -20,3 +20,13 @@ void gen_edges(){
 
   }
 }
+
+void solve(){
+  pthread_t threads[CITIES];
+  int thread_args[CITIES];
+  int i, res;
+
+  for(i = 0; i < CITIES; ++i){
+
+  }
+}
