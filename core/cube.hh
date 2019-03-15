@@ -78,29 +78,32 @@ struct cube {
 
   // Place item into appropriate subcube
   void place(item& inp){
+    // Create and link interior cubes
     if(ntr[TNW] == NULL)
       subdivide();
 
-    // Recurse into appropriate subcube
+    // Recurse into subcube
     if(val.data[X] <= ntr[TNW]->ubd[X]){
       if(val.data[Y] <= ntr[TNW]->ubd[Y]){
 
       }else if(val.data[Z] <= ntr[TNW]->ubd[Z]){
 
       }else
-        ntr[BSW]->val = val; //!
+        ntr[BSW]->place(inp);
     }else if(val.data[Y] <= ntr[TNW]->ubd[Y]){
 
     }else if(val.data[Z] <= ntr[TNW]->ubd[Z]){
 
     }else
-      ntr[BSE]->val = val; //!
+      ntr[BSE]->place(inp);
   }
 
   // Create 8 subcubes within cube
   void subdivide(){
     int i;
     double hx, hy, hz;
+
+    // Add subcubes to heap
     for(i = 0; i < 8; ++i)
       cl_cube.pb(cube()),
       ntr[i] = &cl_cube.back();

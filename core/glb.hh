@@ -12,7 +12,7 @@ const ll MAX_RAM    = 0  //!
        , THREAD_TTL = 0; //!
 
 
-// HEAP
+// HEAP //! no vector?
 
 struct stat;
 vec<stat> cl_stat;

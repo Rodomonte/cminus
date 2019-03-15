@@ -7,7 +7,7 @@
 
 
 struct mem : type {
-  vec<ll> block;
+  vec<ll> block; //!
 
   mem(){}
 

@@ -4,6 +4,8 @@
 #define cminus_hh
 
 
+#include "core/err.hh"
+#include "core/ban.hh"
 #include "core/stat.hh"
 #include "core/stamp.hh"
 #include "core/flag.hh"
