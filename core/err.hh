@@ -6,8 +6,6 @@
 #include "def.hh"
 #include "str.hh"
 
-#define ERR kill("Banned keyword used");
-
 
 void kill(str s){
   printf("ERROR: %s\n", s.c_str());
