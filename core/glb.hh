@@ -20,9 +20,6 @@ vec<stat> cl_stat;
 struct stamp;
 vec<stamp> cl_stamp;
 
-struct flag;
-vec<flag> cl_flag;
-
 struct mem;
 vec<mem> cl_mem;
 

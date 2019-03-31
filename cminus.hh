@@ -8,7 +8,6 @@
 #include "core/ban.hh"
 #include "core/stat.hh"
 #include "core/stamp.hh"
-#include "core/flag.hh"
 #include "core/mem.hh"
 #include "core/num.hh"
 #include "core/str.hh"
