@@ -7,7 +7,8 @@
 // Little-endian
 struct num : mem {
   bool neg;
-  num* err, shift;
+  num* err    //!
+     , shift; // blocks of trailing or preceding zeros
 
   num(): neg(false) { block.pb(0); }
   num(ll _base): neg(_base < 0) { block.pb(_base); }
@@ -34,19 +35,40 @@ struct num : mem {
   bool operator<(const num& o){
     if(neg && !o.neg) return true;
     if(!neg && o.neg) return false;
+    num x = block.size() + (shift ? *shift : 0)
+      , y = o.block.size() + (o.shift ? *(o.shift) : 0);
+    if(x < y) return true;
+    if(x > y) return false;
 
+    int i;
+    if(neg){
+      for(i = 0; i < min(block.size(), o.block.size()); ++i){
+        if(block[i] < o.block[i]) return false;
+        if(block[i] > o.block[i]) return true;
+      }
+      if((shift ? *shift : 0) < (o.shift ? *(o.shift) : 0)) return true;
+      return false;
+
+    }else{
+      for(i = min(block.size(), o.block.size())-1; i >= 0; --i){
+        if(block[i] < o.block[i]) return true;
+        if(block[i] > o.block[i]) return false;
+      }
+      if((shift ? *shift : 0) <= (o.shift ? *(o.shift) : 0)) return false;
+      return true;
+    }
   }
 
-  bool operator>(const num& o){ }
-  bool operator<=(const num& o){ }
-  bool operator>=(const num& o){ }
+  bool operator>(const num& o){ return !(*this < o) && !(*this && o); }
+  bool operator<=(const num& o){ return !(*this > o); }
+  bool operator>=(const num& o){ return !(*this < o); }
 
-  num& operator=(ll n){
-    clear();
-    neg = (n < 0);
-    block.pb(absl(n));
-    return *this;
-  }
+  bool operator==(ll n){ return *this == num(n); }
+  bool operator!=(ll n){ return *this != num(n); }
+  bool operator<(ll n){ return *this < num(n); }
+  bool operator>(ll n){ return *this > num(n); }
+  bool operator<=(ll n){ return *this <= num(n); }
+  bool operator>=(ll n){ return *this >= num(n); }
 
   num& operator=(const num& o){
     clear();
@@ -54,6 +76,13 @@ struct num : mem {
     if(o.err)
       cl_num.pb(*(o.err));
     block = o.block;
+    return *this;
+  }
+
+  num& operator=(ll n){
+    clear();
+    neg = (n < 0);
+    block.pb(absl(n));
     return *this;
   }
 
