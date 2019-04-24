@@ -33,16 +33,23 @@ struct item {
 };
 
 //! hash item as map key -> containing subcube
-struct cube {
+struct cube : type {
   item val;
   double lbd[3], ubd[3]; // Lower/upper xyz bounds
   cube* adj[6]; // Adjacent subcubes
   cube* ntr[8]; // Interior subcubes
 
   cube(){}
-  cube(vec<item>& v){
-    fill(v);
+  cube(vec<item>& v){ fill(v); }
+
+  virtual cube* clone(){
+    cl_cube.pb(cube());
+    return &cl_cube.back().asn(*this);
   }
+
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
 
   // Populate cube
   void fill(vec<item>& v){

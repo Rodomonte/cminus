@@ -20,15 +20,11 @@ struct stat : type {
   stat(){}
   stat(CODE _code): code(_code) {}
 
-  stat* clone(){ cl_stat.pb(*this); return &cl_stat.back(); }
+  virtual stat* clone(){ cl_stat.pb(*this); return &cl_stat.back(); }
 
-  str _string(){
-    return ""; //!
-  }
-
-  str serialize(){
-    return ""; //!
-  }
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
 };
 
 

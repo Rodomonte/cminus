@@ -3,6 +3,8 @@
 #ifndef num_hh
 #define num_hh
 
+#include "mem.hh"
+
 
 // Little-endian
 struct num : mem {
@@ -10,17 +12,16 @@ struct num : mem {
   num* err    //!
      , shift; // blocks of trailing or preceding zeros
 
-  num(): neg(false) { block.pb(0); }
-  num(ll _base): neg(_base < 0) { block.pb(_base); }
+  num(): neg(false) {}
+  num(ll _base): neg(_base < 0) { block[0] = absl(_base); }
 
-  num* clone(){
+  virtual num* clone(){
     cl_num.pb(num());
     return &cl_num.back().asn(*this);
   }
 
-  void clear(){
-    block.clear();
-    block.pb(0);
+  virtual void clear(){
+    mem::clear();
     neg = false;
     err = shift = NULL;
   }
@@ -35,24 +36,24 @@ struct num : mem {
   bool operator<(const num& o){
     if(neg && !o.neg) return true;
     if(!neg && o.neg) return false;
-    num x = block.size() + (shift ? *shift : 0)
-      , y = o.block.size() + (o.shift ? *(o.shift) : 0);
+    num x = size() + (shift ? *shift : 0)
+      , y = o.size() + (o.shift ? *(o.shift) : 0);
     if(x < y) return true;
     if(x > y) return false;
 
     int i;
     if(neg){
-      for(i = 0; i < min(block.size(), o.block.size()); ++i){
-        if(block[i] < o.block[i]) return false;
-        if(block[i] > o.block[i]) return true;
+      for(i = 0; i < min(size(), o.size()); ++i){
+        if((*this)[i] < o[i]) return false;
+        if((*this)[i] > o[i]) return true;
       }
       if((shift ? *shift : 0) < (o.shift ? *(o.shift) : 0)) return true;
       return false;
 
     }else{
-      for(i = min(block.size(), o.block.size())-1; i >= 0; --i){
-        if(block[i] < o.block[i]) return true;
-        if(block[i] > o.block[i]) return false;
+      for(i = min(size(), o.size())-1; i >= 0; --i){
+        if((*this)[i] < o[i]) return true;
+        if((*this)[i] > o[i]) return false;
       }
       if((shift ? *shift : 0) <= (o.shift ? *(o.shift) : 0)) return false;
       return true;
@@ -86,16 +87,62 @@ struct num : mem {
     return *this;
   }
 
+  void add(const num& a, const num& b, num* d){ // a,b > 0
+    bool c;
+    int i,j, n,t,s;
+
+    c = false;
+    d->resize(n = min(a.size(), b.size())); // destabilizes
+    for(i = 0; i < n; ++i){
+      for(j = 0, s = 1, c = false; j < 64; ++j, s <<= 1){
+        t = c ? 1 : 0;
+        if(a.block[i] & s) ++t;
+        if(b.block[i] & s) ++t;
+        c = (t > 1) ? true : false;
+        if((d->block[i] & s) && !c) d->block[i] ^= s; // on->off
+        if(!(d->block[i] & s) && c) d->block[i] |= s; // off->on
+      }
+    }
+
+    for(; i < max(a.size(), b.size()); ++i){
+      d->
+      for(j = 0, s = 1; j < 64; ++j, s <<= 1){
+        t = c ? 1 : 0;
+        if(a.size() > b.size && (a.block[i] & s)) ++t;
+        if(b.size() > a.size && (b.block[i] & s)) ++t;
+        c = (t > 1) ? true : false;
+
+      }
+    }
+    d->stable = true;
+  }
+
+  void sub(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
+  void mul(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
+  void div(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
   num& operator+=(const num& o){
     if(neg && !o.neg){
-      if(-(*this) == o) *this = 0;
-    }
-    if(!neg && o.neg){
+      neg = false;
+      if(*this == o) *this = 0;
+      else if(*this < o) sub(o, *this, this);
+      else sub(*this, o, this), neg = true;
 
-    }
-    int i;
-    for(i = 0; i < block.size(); ++i)
+    }else if(!neg && o.neg){
+      o.neg = false;
+      if(*this == o) *this = 0;
+      else if(*this < o) sub(o, *this, this), neg = true;
+      else sub(*this, o, this);
 
+    }else add(*this, o, this);
     return *this;
   }
 
@@ -178,13 +225,9 @@ struct num : mem {
     // return (int)r;
   }
 
-  str _string(){
-    return ""; //!
-  }
-
-  str serialize(){
-    return ""; //!
-  }
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
 };
 
 

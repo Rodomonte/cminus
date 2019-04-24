@@ -18,7 +18,7 @@ struct Thing : type { // ABSTRACT
     creation = last_upd = clock();
   }
 
-  Thing* clone(){ cl_thing.pb(*this); return &cl_thing.back(); }
+  virtual Thing* clone(){ cl_thing.pb(*this); return &cl_thing.back(); }
 
   virtual stat _upd(){ return stat(PASS); };
   virtual stat _upd(stamp time){ return _upd(); }
@@ -40,14 +40,9 @@ struct Thing : type { // ABSTRACT
     return _validate();
   }
 
-  str _string(){
-    return ""; //!
-  }
-
-  //! involve rand
-  str serialize(){
-    return creation._string();
-  }
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
 };
 
 

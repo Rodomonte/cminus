@@ -12,7 +12,7 @@ struct stamp : type {
   stamp(){}
   stamp(ll _clock): clock(_clock) {}
 
-  stamp* clone(){ cl_stamp.pb(*this); return &cl_stamp.back(); }
+  virtual stamp* clone(){ cl_stamp.pb(*this); return &cl_stamp.back(); }
 
   bool operator==(const stamp& o){ return clock == o.clock; }
   bool operator< (const stamp& o){ return clock < o.clock; }
@@ -20,13 +20,9 @@ struct stamp : type {
   bool operator> (const stamp& o){ return clock > o.clock; }
   bool operator>=(const stamp& o){ return clock >= o.clock; }
 
-  str _string(){
-    return ""; //!
-  }
-
-  str serialize(){
-    return ""; //!
-  }
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
 };
 
 

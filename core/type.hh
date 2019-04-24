@@ -14,6 +14,8 @@ struct type { // ABSTRACT
     return str(typeid(*this).name()) + ": " + _string(); //!
   }
   virtual str serialize() = 0;
+  virtual int size(){ return 1; }
+  virtual void clear(){}
 };
 
 

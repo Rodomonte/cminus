@@ -7,33 +7,39 @@
 
 
 struct mem : type {
+  bool stable;
   vec<llu> block; //! vec/list/array/stack/deque/map?
 
-  mem(){}
+  mem(): stable(true) { block.pb(0); }
 
-  mem* clone(){ cl_mem.pb(*this); return &cl_mem.back(); }
+  virtual mem* clone(){ cl_mem.pb(*this); return &cl_mem.back(); }
+  virtual int size(){ return block.size(); }
+  virtual void clear(){ block.clear(), block.pb(0), stable = true; }
 
+  llu& operator[](int i){ return block[i]; }
   bool operator==(const mem& o){
-    if(block.size() != o.block.size()) return false;
+    if(size() != o.size()) return false;
     int i;
-    for(i = 0; i < block.size(); ++i)
-      if(block[i] != o.block[i]) return false;
+    for(i = 0; i < size(); ++i)
+      if(block[i] != o[i]) return false;
     return true;
   }
 
-  void extend(int n){
+  void resize(int n){
     int i;
-    for(i = 0; i < n; ++i)
-      block.pb(0);
+    if(n < size() - n){
+      block.clear();
+      for(i = 0; i < n; ++i)
+        block.pb(0);
+    }
+    for(; size() > n; block.pop_back());
+    for(; size() < n; block.pb(0));
+    stable = false;
   }
 
-  str _string(){
-    return ""; //!
-  }
-
-  str serialize(){
-    return ""; //!
-  }
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
 };
 
 

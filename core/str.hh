@@ -11,7 +11,7 @@ struct str : std::string {
   str(const char* s): std::string(s) {}
   str(std::string s){ *this = s; }
 
-  str* clone(){ cl_str.pb(*this); return &cl_str.back(); }
+  virtual str* clone(){ cl_str.pb(*this); return &cl_str.back(); }
 
   str lcsseq(const str& o){
 
