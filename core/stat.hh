@@ -4,21 +4,20 @@
 #define stat_hh
 
 #include "type.hh"
+#include "stamp.hh"
 
 
-//! Perhaps no enum, instead global static stats
 enum CODE {
   PASS
 , KILL
-, BREAK
-, CONTINUE
 };
 
 struct stat : type {
   CODE code;
+  stamp time;
 
-  stat(){}
-  stat(CODE _code): code(_code) {}
+  stat(): time(clock()) {}
+  stat(CODE _code): stat(), code(_code) {}
 
   virtual stat* clone(){ cl_stat.pb(*this); return &cl_stat.back(); }
 

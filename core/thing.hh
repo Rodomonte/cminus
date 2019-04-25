@@ -20,18 +20,22 @@ struct Thing : type { // ABSTRACT
 
   virtual Thing* clone(){ cl_thing.pb(*this); return &cl_thing.back(); }
 
-  virtual stat _upd(){ return stat(PASS); };
-  virtual stat _upd(stamp time){ return _upd(); }
-  virtual stat upd(ll time) final {
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
+
+  virtual stat _update(){ return stat(PASS); };
+  virtual stat _update(stamp time){ return _update(); }
+  virtual stat update(ll time) final {
     stamp ts(time);
     if(ts > last_upd){
       last_upd = ts;
-      return _upd(ts);
+      return _update(ts);
     }
     //! log to db
     return stat(PASS);
   }
-  virtual stat upd() final { return upd(clock()); }
+  virtual stat update() final { return update(clock()); }
 
   virtual stat _validate(){};
   virtual stat validate() final {
@@ -39,10 +43,6 @@ struct Thing : type { // ABSTRACT
       return stat(KILL);
     return _validate();
   }
-
-  //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
 };
 
 

@@ -10,6 +10,7 @@
 #include <float.h>
 #include <limits.h>
 #include <time.h>
+#include <string.h>
 #include <pthread.h>
 #include <sys/socket.h>
 #include <stdio.h> //! remove

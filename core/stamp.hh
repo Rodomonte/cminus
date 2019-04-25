@@ -14,15 +14,15 @@ struct stamp : type {
 
   virtual stamp* clone(){ cl_stamp.pb(*this); return &cl_stamp.back(); }
 
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
+
   bool operator==(const stamp& o){ return clock == o.clock; }
   bool operator< (const stamp& o){ return clock < o.clock; }
   bool operator<=(const stamp& o){ return clock <= o.clock; }
   bool operator> (const stamp& o){ return clock > o.clock; }
   bool operator>=(const stamp& o){ return clock >= o.clock; }
-
-  //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
 };
 
 

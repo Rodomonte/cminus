@@ -10,22 +10,100 @@
 struct num : mem {
   bool neg;
   num* err    //!
-     , shift; // blocks of trailing or preceding zeros
+     , shift; //! blocks of trailing or preceding zeros
 
   num(): neg(false) {}
-  num(ll _base): neg(_base < 0) { block[0] = absl(_base); }
+  num(ll n): neg(n < 0) { (*this)[0] = absl(n); }
 
-  virtual num* clone(){
-    cl_num.pb(num());
-    return &cl_num.back().asn(*this);
+  num(double d): neg(d < 0.0) {
+    double n = 1.0;
+    while(n < d)
+      n *= 2.0;
+    n *= 0.5;
+    while(d > 0.0){
+      if(d < 1.0) shift = shift ? shift - 1 : num(-1);
+      (*this)[0] <<= 1;
+      if(d >= n) (*this)[0] |= 1, d -= n;
+    }
   }
 
-  virtual void clear(){
-    mem::clear();
-    neg = false;
-    err = shift = NULL;
+  virtual num* clone(){ cl_num.pb(*this); return &cl_num.back(); }
+  virtual void clear(){ mem::clear(); neg = false; err = shift = NULL; }
+
+  //!
+  virtual str _string(){ return ""; }
+  virtual str serialize(){ return ""; }
+
+  void _add(const num& a, const num& b, num* d){ // a,b > 0
+    bool c;
+    int i,j, n,t,s;
+    num x;
+
+    c = false, n = min(a.size(), b.size());
+    if(d->size() < n) d->resize(n);
+    for(i = 0; i < n; ++i){
+      for(j = 0, s = 1, c = false; j < 64; ++j, s <<= 1){
+        t = c ? 1 : 0;
+        if(a[i] & s) ++t;
+        if(b[i] & s) ++t;
+        c = (t > 1) ? true : false;
+        if(((*d)[i] & s) && !(t & 1)) (*d)[i] ^= s; // on->off
+        if(!((*d)[i] & s) && (t & 1)) (*d)[i] |= s; // off->on
+      }
+    }
+
+    n = max(a.size(), b.size());
+    d->resize(n);
+    for(; i < n; ++i){
+      for(j = 0, s = 1; j < 64; ++j, s <<= 1){
+        t = c ? 1 : 0;
+        if(a.size() > b.size && (a[i] & s)) ++t;
+        if(b.size() > a.size && (b[i] & s)) ++t;
+        c = (t > 1) ? true : false;
+        if(t & 1) (*d)[i] |= s;
+      }
+    }
+
+    if(c) d->extend(), d->block.back() = 1;
+    x = (a.shift ? *a.shift : num(0)) + (b.shift ? *b.shift : 0);
+    if(x()) d->shift = x.clone();
   }
 
+  void _sub(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
+  void _mul(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
+  void _div(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
+  void _pow(const num& n, const num& e, num* d){ // a,b > 0
+    // ll r = 1;
+    // while(e){
+    //   if(e & 1) r = r * n % MOD;
+    //   n = n * n % MOD, e >>= 1;
+    // }
+    // return (int)r;
+  }
+
+  void _and(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
+  void _or(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+
+  void _xor(const num& a, const num& b, num* d){ // a,b > 0
+
+  }
+  num xor(const num& o){ num n; _xor(*this, o, &n); return n; }
+
+  bool operator()(){ return *this != 0; }
   bool operator==(const num& o){
     if(neg != o.neg || (shift && !o.shift) || (!shift && o.shift) ||
        (shift && o.shift && *shift != *(o.shift))) return false;
@@ -83,50 +161,8 @@ struct num : mem {
   num& operator=(ll n){
     clear();
     neg = (n < 0);
-    block.pb(absl(n));
+    (*this)[0] = absl(n);
     return *this;
-  }
-
-  void add(const num& a, const num& b, num* d){ // a,b > 0
-    bool c;
-    int i,j, n,t,s;
-
-    c = false;
-    d->resize(n = min(a.size(), b.size())); // destabilizes
-    for(i = 0; i < n; ++i){
-      for(j = 0, s = 1, c = false; j < 64; ++j, s <<= 1){
-        t = c ? 1 : 0;
-        if(a.block[i] & s) ++t;
-        if(b.block[i] & s) ++t;
-        c = (t > 1) ? true : false;
-        if((d->block[i] & s) && !c) d->block[i] ^= s; // on->off
-        if(!(d->block[i] & s) && c) d->block[i] |= s; // off->on
-      }
-    }
-
-    for(; i < max(a.size(), b.size()); ++i){
-      d->
-      for(j = 0, s = 1; j < 64; ++j, s <<= 1){
-        t = c ? 1 : 0;
-        if(a.size() > b.size && (a.block[i] & s)) ++t;
-        if(b.size() > a.size && (b.block[i] & s)) ++t;
-        c = (t > 1) ? true : false;
-
-      }
-    }
-    d->stable = true;
-  }
-
-  void sub(const num& a, const num& b, num* d){ // a,b > 0
-
-  }
-
-  void mul(const num& a, const num& b, num* d){ // a,b > 0
-
-  }
-
-  void div(const num& a, const num& b, num* d){ // a,b > 0
-
   }
 
   num& operator+=(const num& o){
@@ -162,6 +198,10 @@ struct num : mem {
     return *this;
   }
 
+  num& operator^=(const num& o){
+    return *this;
+  }
+
   num& operator<<=(const num& o){
     return *this;
   }
@@ -178,20 +218,22 @@ struct num : mem {
     return *this;
   }
 
-  num& operator^=(const num& o){
-    return *this;
-  }
-
   num& operator+=(ll v){ *this += num(v); return *this; }
   num& operator-=(ll v){ *this -= num(v); return *this; }
   num& operator*=(ll v){ *this *= num(v); return *this; }
   num& operator/=(ll v){ *this /= num(v); return *this; }
   num& operator%=(ll v){ *this %= num(v); return *this; }
+  num& operator^=(ll v){ *this ^= num(v); return *this; }
+
+  num& operator++(){ return *this += 1; }
+  num operator++(int u){ num r(*this); *this += 1; return r; }
+  num& operator--(){ return *this -= 1; }
+  num operator--(int u){ return *this - 1; }
+
   num& operator<<=(ll v){ *this <<= num(v); return *this; }
   num& operator>>=(ll v){ *this >>= num(v); return *this; }
   num& operator&=(ll v){ *this &= num(v); return *this; }
   num& operator|=(ll v){ *this |= num(v); return *this; }
-  num& operator^=(ll v){ *this ^= num(v); return *this; }
 
   num operator+(const num& o){ num n = *this; return n += o; }
   num operator-(){ num n = *this; n.neg = !n.neg; return n; }
@@ -199,35 +241,33 @@ struct num : mem {
   num operator*(const num& o){ num n = *this; return n *- o; }
   num operator/(const num& o){ num n = *this; return n /= o; }
   num operator%(const num& o){ num n = *this; return n %= o; }
+  num operator^(const num& o){ num n = *this; return n ^= o; }
+
   num operator<<(const num& o){ num n = *this; return n <<= o; }
   num operator>>(const num& o){ num n = *this; return n >>= o; }
   num operator&(const num& o){ num n = *this; return n &= o; }
   num operator|(const num& o){ num n = *this; return n |= o; }
-  num operator^(const num& o){ num n = *this; return n ^= o; }
+
+  num operator!(){ return (*this == 0) ? num(1) : num(0); }
+  num operator~(){
+    int i;
+    num n;
+    for(i = 0; i < size(); ++i)
+      (*this)[i] = ~(*this)[i];
+    return n;
+  }
 
   num operator+(ll v){ num n = *this; return n += num(v); }
   num operator-(ll v){ num n = *this; return n -= num(v); }
   num operator*(ll v){ num n = *this; return n *= num(v); }
   num operator/(ll v){ num n = *this; return n /= num(v); }
   num operator%(ll v){ num n = *this; return n %= num(v); }
+  num operator^(ll v){ num n = *this; return n ^= num(v); }
+
   num operator<<(ll v){ num n = *this; return n <<= num(v); }
   num operator>>(ll v){ num n = *this; return n >>= num(v); }
   num operator&(ll v){ num n = *this; return n &= num(v); }
   num operator|(ll v){ num n = *this; return n |= num(v); }
-  num operator^(ll v){ num n = *this; return n ^= num(v); }
-
-  num pow(const num& e){
-    // ll r = 1;
-    // while(e){
-    //   if(e & 1) r = r * n % MOD;
-    //   n = n * n % MOD, e >>= 1;
-    // }
-    // return (int)r;
-  }
-
-  //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
 };
 
 

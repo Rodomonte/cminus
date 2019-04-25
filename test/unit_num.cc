@@ -13,5 +13,8 @@ int main(){
   assert(a == 0);
   assert(a == b);
 
+  a = b = 2;
+  assert(a + b == 4);
+
   return 0;
 }

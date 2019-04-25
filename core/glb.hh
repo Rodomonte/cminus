@@ -26,9 +26,6 @@ vec<mem> cl_mem;
 struct num;
 vec<num> cl_num;
 
-struct str;
-vec<str> cl_str;
-
 struct cube;
 vec<cube> cl_cube;
 
