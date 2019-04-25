@@ -3,7 +3,7 @@
 #ifndef glb_hh
 #define glb_hh
 
-#include "def.hh"
+#include "util.hh"
 
 
 // CONSTANTS

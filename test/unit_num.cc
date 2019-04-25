@@ -1,10 +1,8 @@
 // NUM UNIT TEST
 
-#include "stdio.h"
-#include "stdlib.h"
-#include "../core/num.hh"
-
-bool assert(bool b){ if(!b){ printf("Assertion failed.\n"); exit(1); } }
+#include <stdio.h>
+#include <stdlib.h>
+#include "../cminus.hh"
 
 int main(){
   num a,b,c;

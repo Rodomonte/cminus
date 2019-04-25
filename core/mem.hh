@@ -11,20 +11,22 @@ struct mem : type {
 
   mem(){ block.pb(0); }
 
-  virtual mem* clone(){ cl_mem.pb(*this); return &cl_mem.back(); }
-  virtual int size(){ return block.size(); }
+  virtual mem* clone() const { cl_mem.pb(*this); return &cl_mem.back(); }
+  virtual int size() const { return block.size(); }
   virtual void clear(){ block.clear(), block.pb(0); }
 
   //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
+  virtual str _string() const { return ""; }
+  virtual str serialize() const { return ""; }
 
+  llu at(int i) const { return block[i]; }
   llu& operator[](int i){ return block[i]; }
-  bool operator==(const mem& o){
+
+  bool operator==(const mem& o) const {
     if(size() != o.size()) return false;
     int i;
     for(i = 0; i < size(); ++i)
-      if(block[i] != o[i]) return false;
+      if(block.at(i) != o.at(i)) return false;
     return true;
   }
 

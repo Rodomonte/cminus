@@ -17,13 +17,13 @@ struct stat : type {
   stamp time;
 
   stat(): time(clock()) {}
-  stat(CODE _code): stat(), code(_code) {}
+  stat(CODE _code): stat() { code = _code; }
 
-  virtual stat* clone(){ cl_stat.pb(*this); return &cl_stat.back(); }
+  virtual stat* clone() const { cl_stat.pb(*this); return &cl_stat.back(); }
 
   //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
+  virtual str _string() const { return ""; }
+  virtual str serialize() const { return ""; }
 };
 
 

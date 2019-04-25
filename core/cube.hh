@@ -21,20 +21,19 @@ enum Ntr {
   TNW, TNE, TSE, TSW, BNW, BNE, BSE, BSW
 };
 
-struct item {
-  bool set;
-  double data[3];
-  item(){}
-  item(double x, double y, double z):
-    data[X](x), data[Y](y), data[Z](z) {}
-  void clear(){
-    set = false, data[0] = data[1] = data[2] = 0.0;
-  }
-};
-
 //! hash item as map key -> containing subcube
 struct cube : type {
-  item val;
+  struct item {
+    bool set;
+    double data[3];
+    item(){}
+    item(double x, double y, double z){
+      data[X] = x, data[Y] = y, data[Z] = z;
+    }
+    void clear(){
+      set = false, data[0] = data[1] = data[2] = 0.0;
+    }
+  } val ;
   double lbd[3], ubd[3]; // Lower/upper xyz bounds
   cube* adj[6]; // Adjacent subcubes
   cube* ntr[8]; // Interior subcubes
@@ -42,22 +41,19 @@ struct cube : type {
   cube(){}
   cube(vec<item>& v){ fill(v); }
 
-  virtual cube* clone(){
-    cl_cube.pb(cube());
-    return &cl_cube.back().asn(*this);
-  }
+  virtual cube* clone() const { cl_cube.pb(*this); return &cl_cube.back(); }
 
   //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
+  virtual str _string() const { return ""; }
+  virtual str serialize() const { return ""; }
 
   // Populate cube
   void fill(vec<item>& v){
     int i;
-    for(i = 0; i < v[0].data.size(); ++i)
-      lbd.pb(DBL_MAX), ubd.pb(DBL_MIN);
+    for(i = 0; i < 3; ++i)
+      lbd[i] = DBL_MAX, ubd[i] = DBL_MIN;
     for(item& t : v)
-      for(i = 0; i < t.data.size(); ++i)
+      for(i = 0; i < 3; ++i)
         lbd[i] = mind(t.data[i], lbd[i]),
         ubd[i] = maxd(t.data[i], ubd[i]);
     for(item& t : v)
@@ -68,7 +64,7 @@ struct cube : type {
   void insert(item& inp){
     int i;
     // If no items in cube, place into outer cube
-    if(!val.data.set && ntr[TNW] == NULL){
+    if(!val.set && ntr[TNW] == NULL){
       val = inp;
       return;
     }

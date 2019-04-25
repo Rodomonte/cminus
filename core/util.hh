@@ -3,6 +3,10 @@
 #ifndef util_hh
 #define util_hh
 
+#include "def.hh"
+
+
+bool assert(bool b){ if(!b){ printf("Assertion failed.\n"); exit(1); } }
 
 int abs(int a){ return (a < 0) ? -a : a; }
 int min(int a, int b){ return (a < b) ? a : b; }

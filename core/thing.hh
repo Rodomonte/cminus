@@ -18,11 +18,11 @@ struct Thing : type { // ABSTRACT
     creation = last_upd = clock();
   }
 
-  virtual Thing* clone(){ cl_thing.pb(*this); return &cl_thing.back(); }
+  virtual Thing* clone() const { cl_thing.pb(*this); return &cl_thing.back(); }
 
   //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
+  virtual str _string() const { return ""; }
+  virtual str serialize() const { return ""; }
 
   virtual stat _update(){ return stat(PASS); };
   virtual stat _update(stamp time){ return _update(); }

@@ -9,11 +9,12 @@
 // Little-endian
 struct num : mem {
   bool neg;
-  num* err    //!
-     , shift; //! blocks of trailing or preceding zeros
+  num *err    //!
+    , *shift; //! blocks of trailing or preceding zeros
 
   num(): neg(false) {}
   num(ll n): neg(n < 0) { (*this)[0] = absl(n); }
+  num(int n): num((ll)n) {}
 
   num(double d): neg(d < 0.0) {
     double n = 1.0;
@@ -21,20 +22,23 @@ struct num : mem {
       n *= 2.0;
     n *= 0.5;
     while(d > 0.0){
-      if(d < 1.0) shift = shift ? shift - 1 : num(-1);
+      if(d < 1.0){
+        if(shift) *shift = *shift - 1;
+        else shift = num(-1).clone();
+      }
       (*this)[0] <<= 1;
       if(d >= n) (*this)[0] |= 1, d -= n;
     }
   }
 
-  virtual num* clone(){ cl_num.pb(*this); return &cl_num.back(); }
+  virtual num* clone() const { cl_num.pb(*this); return &cl_num.back(); }
   virtual void clear(){ mem::clear(); neg = false; err = shift = NULL; }
 
   //!
-  virtual str _string(){ return ""; }
-  virtual str serialize(){ return ""; }
+  virtual str _string() const { return ""; }
+  virtual str serialize() const { return ""; }
 
-  void _add(const num& a, const num& b, num* d){ // a,b > 0
+  void _add(const num& a, const num& b, num* d) const { // a,b > 0
     bool c;
     int i,j, n,t,s;
     num x;
@@ -44,8 +48,8 @@ struct num : mem {
     for(i = 0; i < n; ++i){
       for(j = 0, s = 1, c = false; j < 64; ++j, s <<= 1){
         t = c ? 1 : 0;
-        if(a[i] & s) ++t;
-        if(b[i] & s) ++t;
+        if(a.at(i) & s) ++t;
+        if(b.at(i) & s) ++t;
         c = (t > 1) ? true : false;
         if(((*d)[i] & s) && !(t & 1)) (*d)[i] ^= s; // on->off
         if(!((*d)[i] & s) && (t & 1)) (*d)[i] |= s; // off->on
@@ -57,8 +61,8 @@ struct num : mem {
     for(; i < n; ++i){
       for(j = 0, s = 1; j < 64; ++j, s <<= 1){
         t = c ? 1 : 0;
-        if(a.size() > b.size && (a[i] & s)) ++t;
-        if(b.size() > a.size && (b[i] & s)) ++t;
+        if(a.size() > b.size() && (a.at(i) & s)) ++t;
+        if(b.size() > a.size() && (b.at(i) & s)) ++t;
         c = (t > 1) ? true : false;
         if(t & 1) (*d)[i] |= s;
       }
@@ -69,19 +73,19 @@ struct num : mem {
     if(x()) d->shift = x.clone();
   }
 
-  void _sub(const num& a, const num& b, num* d){ // a,b > 0
+  void _sub(const num& a, const num& b, num* d) const { // a,b > 0
 
   }
 
-  void _mul(const num& a, const num& b, num* d){ // a,b > 0
+  void _mul(const num& a, const num& b, num* d) const { // a,b > 0
 
   }
 
-  void _div(const num& a, const num& b, num* d){ // a,b > 0
+  void _div(const num& a, const num& b, num* d) const { // a,b > 0
 
   }
 
-  void _pow(const num& n, const num& e, num* d){ // a,b > 0
+  void _pow(const num& n, const num& e, num* d) const { // a,b > 0
     // ll r = 1;
     // while(e){
     //   if(e & 1) r = r * n % MOD;
@@ -90,64 +94,87 @@ struct num : mem {
     // return (int)r;
   }
 
-  void _and(const num& a, const num& b, num* d){ // a,b > 0
+  void _and(const num& a, const num& b, num* d) const { // a,b > 0
 
   }
 
-  void _or(const num& a, const num& b, num* d){ // a,b > 0
+  void _or(const num& a, const num& b, num* d) const { // a,b > 0
 
   }
 
-  void _xor(const num& a, const num& b, num* d){ // a,b > 0
+  void _xor(const num& a, const num& b, num* d) const { // a,b > 0
 
   }
-  num xor(const num& o){ num n; _xor(*this, o, &n); return n; }
 
-  bool operator()(){ return *this != 0; }
-  bool operator==(const num& o){
+  num sin(){
+    return 0.0;
+  }
+
+  num cos(){
+    return 0.0;
+  }
+
+  num tan(){
+    return 0.0;
+  }
+
+  num asin(){
+    return 0.0;
+  }
+
+  num acos(){
+    return 0.0;
+  }
+
+  num atan(){
+    return 0.0;
+  }
+
+  bool operator()() const { return *this != 0; }
+  bool operator==(const num& o) const {
     if(neg != o.neg || (shift && !o.shift) || (!shift && o.shift) ||
-       (shift && o.shift && *shift != *(o.shift))) return false;
+       (shift && o.shift && *shift != *o.shift)) return false;
     return mem::operator==(o);
   }
-  bool operator!=(const num& o){ return !(*this == o); }
+  bool operator!=(const num& o) const { return !(*this == o); }
 
-  bool operator<(const num& o){
+  bool operator<(const num& o) const {
     if(neg && !o.neg) return true;
     if(!neg && o.neg) return false;
-    num x = size() + (shift ? *shift : 0)
-      , y = o.size() + (o.shift ? *(o.shift) : 0);
+    num x(num(size()) + (shift ? *shift : 0))
+      , y(num(o.size()) + (o.shift ? *o.shift : 0));
     if(x < y) return true;
     if(x > y) return false;
 
     int i;
     if(neg){
       for(i = 0; i < min(size(), o.size()); ++i){
-        if((*this)[i] < o[i]) return false;
-        if((*this)[i] > o[i]) return true;
+        if((*this).at(i) < o.at(i)) return false;
+        if((*this).at(i) > o.at(i)) return true;
       }
-      if((shift ? *shift : 0) < (o.shift ? *(o.shift) : 0)) return true;
+      if((shift ? *shift : 0) < (o.shift ? *o.shift : 0)) return true;
       return false;
 
     }else{
       for(i = min(size(), o.size())-1; i >= 0; --i){
-        if((*this)[i] < o[i]) return true;
-        if((*this)[i] > o[i]) return false;
+        if((*this).at(i) < o.at(i)) return true;
+        if((*this).at(i) > o.at(i)) return false;
       }
-      if((shift ? *shift : 0) <= (o.shift ? *(o.shift) : 0)) return false;
+      if((shift ? *shift : 0) <= (o.shift ? *o.shift : 0)) return false;
       return true;
     }
   }
 
-  bool operator>(const num& o){ return !(*this < o) && !(*this && o); }
-  bool operator<=(const num& o){ return !(*this > o); }
-  bool operator>=(const num& o){ return !(*this < o); }
+  bool operator>(const num& o) const { return !(*this < o) && !(*this == o); }
+  bool operator<=(const num& o) const { return !(*this > o); }
+  bool operator>=(const num& o) const { return !(*this < o); }
 
-  bool operator==(ll n){ return *this == num(n); }
-  bool operator!=(ll n){ return *this != num(n); }
-  bool operator<(ll n){ return *this < num(n); }
-  bool operator>(ll n){ return *this > num(n); }
-  bool operator<=(ll n){ return *this <= num(n); }
-  bool operator>=(ll n){ return *this >= num(n); }
+  bool operator==(ll n) const { return *this == num(n); }
+  bool operator!=(ll n) const { return *this != num(n); }
+  bool operator<(ll n) const { return *this < num(n); }
+  bool operator>(ll n) const { return *this > num(n); }
+  bool operator<=(ll n) const { return *this <= num(n); }
+  bool operator>=(ll n) const { return *this >= num(n); }
 
   num& operator=(const num& o){
     clear();
@@ -169,16 +196,13 @@ struct num : mem {
     if(neg && !o.neg){
       neg = false;
       if(*this == o) *this = 0;
-      else if(*this < o) sub(o, *this, this);
-      else sub(*this, o, this), neg = true;
-
+      else if(*this < o) _sub(o, *this, this);
+      else _sub(*this, o, this), neg = true;
     }else if(!neg && o.neg){
-      o.neg = false;
       if(*this == o) *this = 0;
-      else if(*this < o) sub(o, *this, this), neg = true;
-      else sub(*this, o, this);
-
-    }else add(*this, o, this);
+      else if(*this < o) _sub(o, *this, this), neg = true;
+      else _sub(*this, o, this);
+    }else _add(*this, o, this);
     return *this;
   }
 
@@ -235,39 +259,40 @@ struct num : mem {
   num& operator&=(ll v){ *this &= num(v); return *this; }
   num& operator|=(ll v){ *this |= num(v); return *this; }
 
-  num operator+(const num& o){ num n = *this; return n += o; }
-  num operator-(){ num n = *this; n.neg = !n.neg; return n; }
-  num operator-(const num& o){ num n = *this; return n -= o; }
-  num operator*(const num& o){ num n = *this; return n *- o; }
-  num operator/(const num& o){ num n = *this; return n /= o; }
-  num operator%(const num& o){ num n = *this; return n %= o; }
-  num operator^(const num& o){ num n = *this; return n ^= o; }
+  num operator+(const num& o) const { num n = *this; n += o; return n; }
+  num operator-() const { num n = *this; n.neg = !n.neg; return n; }
+  num operator-(const num& o) const { num n = *this; n -= o; return n; }
+  num operator*(const num& o) const { num n = *this; n *= o; return n; }
+  num operator/(const num& o) const { num n = *this; n /= o; return n; }
+  num operator%(const num& o) const { num n = *this; n %= o; return n; }
+  num operator^(const num& o) const { num n = *this; n ^= o; return n; }
 
-  num operator<<(const num& o){ num n = *this; return n <<= o; }
-  num operator>>(const num& o){ num n = *this; return n >>= o; }
-  num operator&(const num& o){ num n = *this; return n &= o; }
-  num operator|(const num& o){ num n = *this; return n |= o; }
+  num operator<<(const num& o) const { num n = *this; n <<= o; return n; }
+  num operator>>(const num& o) const { num n = *this; n >>= o; return n; }
+  num operator&(const num& o) const { num n = *this; n &= o; return n; }
+  num operator|(const num& o) const { num n = *this; n |= o; return n; }
+  num operator||(const num& o) const { num n; _xor(*this, o, &n); return n; }
 
-  num operator!(){ return (*this == 0) ? num(1) : num(0); }
-  num operator~(){
+  num operator!() const { return (*this == 0) ? num(1) : num(0); }
+  num operator~() const {
     int i;
-    num n;
+    num n = *this;
     for(i = 0; i < size(); ++i)
-      (*this)[i] = ~(*this)[i];
+      n[i] = ~n[i];
     return n;
   }
 
-  num operator+(ll v){ num n = *this; return n += num(v); }
-  num operator-(ll v){ num n = *this; return n -= num(v); }
-  num operator*(ll v){ num n = *this; return n *= num(v); }
-  num operator/(ll v){ num n = *this; return n /= num(v); }
-  num operator%(ll v){ num n = *this; return n %= num(v); }
-  num operator^(ll v){ num n = *this; return n ^= num(v); }
+  num operator+(ll v) const { num n = *this; n += num(v); return n; }
+  num operator-(ll v) const { num n = *this; n -= num(v); return n; }
+  num operator*(ll v) const { num n = *this; n *= num(v); return n; }
+  num operator/(ll v) const { num n = *this; n /= num(v); return n; }
+  num operator%(ll v) const { num n = *this; n %= num(v); return n; }
+  num operator^(ll v) const { num n = *this; n ^= num(v); return n; }
 
-  num operator<<(ll v){ num n = *this; return n <<= num(v); }
-  num operator>>(ll v){ num n = *this; return n >>= num(v); }
-  num operator&(ll v){ num n = *this; return n &= num(v); }
-  num operator|(ll v){ num n = *this; return n |= num(v); }
+  num operator<<(ll v) const { num n = *this; n <<= num(v); return n; }
+  num operator>>(ll v) const { num n = *this; n >>= num(v); return n; }
+  num operator&(ll v) const { num n = *this; n &= num(v); return n; }
+  num operator|(ll v) const { num n = *this; n |= num(v); return n; }
 };
 
 
