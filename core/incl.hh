@@ -20,7 +20,7 @@
 //#include <gl/gl.h>
 //#include <sfml/graphics.hpp>
 
-#include <vector>
+//!
 //#include <queue>
 #include <deque>
 #include <unordered_set>
@@ -28,7 +28,8 @@
 //#include <unordered_map>
 //#include <map>
 //#include <priority_queue>
-#include <string>
+
+#include "vec.hh"
 
 
 #endif

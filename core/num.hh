@@ -12,11 +12,10 @@ struct num : mem {
   num *err    //!
     , *shift; //! blocks of trailing or preceding zeros
 
-  num(): neg(false) {}
-  num(ll n): neg(n < 0) { (*this)[0] = absl(n); }
+  num(): neg(false), shift(NULL), err(NULL) {}
+  num(ll n): neg(n < 0), shift(NULL), err(NULL) { (*this)[0] = absl(n); }
   num(int n): num((ll)n) {}
-
-  num(double d): neg(d < 0.0) {
+  num(double d): neg(d < 0.0), shift(NULL), err(NULL) {
     double n = 1.0;
     while(n < d)
       n *= 2.0;
@@ -30,13 +29,29 @@ struct num : mem {
       if(d >= n) (*this)[0] |= 1, d -= n;
     }
   }
+  num(const num& o){ *this = o; }
 
   virtual num* clone() const { cl_num.pb(*this); return &cl_num.back(); }
   virtual void clear(){ mem::clear(); neg = false; err = shift = NULL; }
 
+  virtual str _string() const {
+    if(!(*this)) return str('0');
+    int i;
+    str s;
+    num n(*this);
+    vec<char> v;
+    while(n > 0)
+      v.pb((n % 10).as_char()), n /= 10;
+    if(neg) s = str("-");
+    for(i = v.size()-1; i >= 0; --i)
+      s += str(v[i] + '0');
+    return s;
+  }
+
   //!
-  virtual str _string() const { return ""; }
   virtual str serialize() const { return ""; }
+
+  char as_char() const { return (at(0) & 0xFFLLU); }
 
   void _add(const num& a, const num& b, num* d) const { // a,b > 0
     bool c;
@@ -149,16 +164,16 @@ struct num : mem {
     int i;
     if(neg){
       for(i = 0; i < min(size(), o.size()); ++i){
-        if((*this).at(i) < o.at(i)) return false;
-        if((*this).at(i) > o.at(i)) return true;
+        if(this->at(i) < o.at(i)) return false;
+        if(this->at(i) > o.at(i)) return true;
       }
       if((shift ? *shift : 0) < (o.shift ? *o.shift : 0)) return true;
       return false;
 
     }else{
       for(i = min(size(), o.size())-1; i >= 0; --i){
-        if((*this).at(i) < o.at(i)) return true;
-        if((*this).at(i) > o.at(i)) return false;
+        if(this->at(i) < o.at(i)) return true;
+        if(this->at(i) > o.at(i)) return false;
       }
       if((shift ? *shift : 0) <= (o.shift ? *o.shift : 0)) return false;
       return true;
@@ -273,7 +288,7 @@ struct num : mem {
   num operator|(const num& o) const { num n = *this; n |= o; return n; }
   num operator||(const num& o) const { num n; _xor(*this, o, &n); return n; }
 
-  num operator!() const { return (*this == 0) ? num(1) : num(0); }
+  bool operator!() const { return (*this == 0) ? true : false; }
   num operator~() const {
     int i;
     num n = *this;

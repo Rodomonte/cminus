@@ -4,12 +4,18 @@
 #define glb_hh
 
 #include "util.hh"
+#include "vec.hh"
 
 
 // CONSTANTS
 
 const ll MAX_RAM    = 0  //!
        , THREAD_TTL = 0; //!
+
+
+// BUFFERS
+
+char buf[10485760];
 
 
 // HEAP //! no vector?

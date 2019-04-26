@@ -8,7 +8,6 @@
 
 #define ll long long
 #define llu unsigned long long
-#define vec std::vector
 #define uset std::unordered_set
 #define iter iterator
 
