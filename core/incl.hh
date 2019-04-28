@@ -13,9 +13,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <sys/socket.h>
-#include <stdio.h> //! remove
-//#include <limits.h>
-//#include <typeinfo.h>
+#include <stdio.h> //!
 
 //#include <gl/gl.h>
 //#include <sfml/graphics.hpp>

@@ -7,23 +7,72 @@
 int main(){
   num a,b,c;
 
-  printf("assign\n");
-  a = b = 2, c = 4;
+  ASSERT = 0;
+  printf("Operator Test:\n");
 
+  printf("=\n");
+  a = b = 2;
+  c = 4;
+
+  //!
   str s(a.string()), t(b.string()), u(c.string());
   printf("%s %s %s\n", s.c_str(), t.c_str(), u.c_str());
 
-  printf("compare\n");
+  printf("==\n");
   assert(a == 2);
+  assert(!(a == 3));
+  assert(a == a);
   assert(a == b);
-  assert(a != c);
-  assert(c != 2);
+  assert(!(a == c));
+  assert(!(c == b));
 
-  printf("add\n");
-  assert(a + b == 4);
+  printf("!=\n");
+  assert(!(a != 2));
+  assert(a != 3);
+  assert(!(a != a));
+  assert(!(a != b));
+  assert(a != c);
+  assert(c != b);
+
+  printf("<\n");
+  assert(!(a < 2));
+  assert(a < 3);
+  assert(!(a < a));
+  assert(!(a < b));
+  assert(a < c);
+  assert(!(c < b));
+
+  printf(">\n");
+  assert(a > 1);
+  assert(!(a > 2));
+  assert(!(a > a));
+  assert(!(a > b));
+  assert(!(a > c));
+  assert(c > b);
+
+  printf("<=\n");
+  assert(!(a <= 1));
+  assert(a <= 2);
+  assert(a <= a);
+  assert(a <= b);
+  assert(a <= c);
+  assert(!(c <= b));
+
+  printf(">=\n");
+  assert(a >= 2);
+  assert(!(a >= 3));
+  assert(a >= a);
+  assert(a >= b);
+  assert(!(a >= c));
+  assert(c >= b);
+
+  printf("+\n");
+  assert(a + 0 == a);
+  assert(a + 2 == c);
+  assert(a + a == c);
   assert(a + b == c);
 
-  printf("addeq\n");
+  printf("+=\n");
   assert((a += b) == c);
   assert((b += b) == a);
 

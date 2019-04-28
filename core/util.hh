@@ -6,7 +6,18 @@
 #include "def.hh"
 
 
-bool assert(bool b){ if(!b){ printf("Assertion failed.\n"); exit(1); } }
+void kill(const char* e){
+  printf("ERR: %s\n", e);
+  exit(1);
+}
+
+int ASSERT;
+bool assert(bool b){
+  if(!b){
+    printf("After %d success:", ASSERT);
+    kill("Assertion failed");
+  }else ++ASSERT;
+}
 
 int abs(int a){ return (a < 0) ? -a : a; }
 int min(int a, int b){ return (a < b) ? a : b; }
