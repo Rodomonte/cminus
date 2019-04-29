@@ -14,7 +14,7 @@ void kill(const char* e){
 int ASSERT;
 bool assert(bool b){
   if(!b){
-    printf("After %d success:", ASSERT);
+    printf("After %d success:\n", ASSERT);
     kill("Assertion failed");
   }else ++ASSERT;
 }

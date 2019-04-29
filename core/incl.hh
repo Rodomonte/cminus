@@ -8,7 +8,6 @@
 //#include <windows.h>
 
 #include <float.h>
-#include <limits.h>
 #include <time.h>
 #include <string.h>
 #include <pthread.h>

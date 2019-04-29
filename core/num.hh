@@ -10,41 +10,25 @@
 struct num : mem {
   bool neg;
   num *err; //!
-  struct shift {
-    ll val;
-    shift(): val(0) {}
-    bool operator==(const shift& o){ return val == o.val; }
-    bool operator<(ll n){ return val < n; }
-    shift& operator=(const shift& o){ val = o.val; return *this; }
-    shift& operator+=(ll n){
-      if((val > 0 && n > 0 && LL_MAX - val < n) ||
-         (val < 0 && n < 0 && LL_MIN + val > n))
-        kill("num.shift exceeded bounds");
-      val += n;
-      return *this;
-    }
-    shift& operator+=(const shift& o){ return *this += o.val; }
-    shift& operator--(){ val += -1; return *this; }
-  } shf;
 
   num(): neg(false), err(NULL) {}
   num(ll n): neg(n < 0), err(NULL) { (*this)[0] = absl(n); }
   num(int n): num((ll)n) {}
-  num(double d): neg(d < 0.0), err(NULL) {
-    double n = 1.0;
-    while(n < d)
-      n *= 2.0;
-    n *= 0.5;
-    while(d > 0.0){
-      if(d < 1.0) --shf;
-      (*this)[0] <<= 1;
-      if(d >= n) (*this)[0] |= 1, d -= n;
-    }
-  }
+  // num(double d): neg(d < 0.0), err(NULL) {
+  //   double n = 1.0;
+  //   while(n < d)
+  //     n *= 2.0;
+  //   n *= 0.5;
+  //   while(d > 0.0){
+  //     if(d < 1.0) --shf;
+  //     (*this)[0] <<= 1;
+  //     if(d >= n) (*this)[0] |= 1, d -= n;
+  //   }
+  // }
   num(const num& o){ *this = o; }
 
   virtual num* clone() const { cl_num.pb(*this); return &cl_num.back(); }
-  virtual void clear(){ mem::clear(), neg = false, err = NULL, shf = 0; }
+  virtual void clear(){ mem::clear(), neg = false, err = NULL; }
 
   virtual str _string() const {
     if(!(*this)) return str('0');
@@ -52,14 +36,11 @@ struct num : mem {
     str s;
     num n(*this);
     vec<char> v;
-    printf("!\n");
     while(n > 0)
       v.pb((n % 10).as_char()), n /= 10;
-    printf("!\n");
     if(neg) s = str("-");
     for(i = v.size()-1; i >= 0; --i)
       s += str(v[i] + '0');
-    printf("!\n");
     return s;
   }
 
@@ -97,9 +78,7 @@ struct num : mem {
         if(t & 1) (*d)[i] |= s;
       }
     }
-
     if(c) d->extend(), d->block.back() = 1;
-    d->shf = a.shf, d->shf += b.shf;
  }
 
   void _sub(const num& a, const num& b, num* d) const { // a,b > 0
@@ -135,33 +114,9 @@ struct num : mem {
 
   }
 
-  num sin(){
-    return 0.0;
-  }
-
-  num cos(){
-    return 0.0;
-  }
-
-  num tan(){
-    return 0.0;
-  }
-
-  num asin(){
-    return 0.0;
-  }
-
-  num acos(){
-    return 0.0;
-  }
-
-  num atan(){
-    return 0.0;
-  }
-
   bool operator()() const { return *this != 0; }
   bool operator==(const num& o) const {
-    if(neg != o.neg || shf != o.shf) return false;
+    if(neg != o.neg) return false;
     return mem::operator==(o);
   }
   bool operator!=(const num& o) const { return !(*this == o); }
@@ -169,33 +124,24 @@ struct num : mem {
   bool operator<(const num& o) const {
     if(neg && !o.neg) return true;
     if(!neg && o.neg) return false;
-    printf("!!\n");
-    num x(size()), y(o.size());
-    if(shift) _add(x, *shift, &x);
-    if(o.shift) _add(y, *o.shift, &y);
-    printf("!!\n");
-    if(x < y) return true;
-    if(x > y) return false;
-    printf("!!\n");
+    llu x = size(), y = o.size();
+    if(size() < o.size()) return true;
+    if(size() > o.size()) return false;
 
     int i;
     if(neg){
-      printf("!! 1\n");
-      for(i = 0; i < min(size(), o.size()); ++i){
+      for(i = 0; i < size(); ++i){
         if(this->at(i) < o.at(i)) return false;
         if(this->at(i) > o.at(i)) return true;
       }
-      if((shift ? *shift : 0) < (o.shift ? *o.shift : 0)) return true;
       return false;
 
     }else{
-      printf("!! 2\n");
-      for(i = min(size(), o.size())-1; i >= 0; --i){
+      for(i = size()-1; i >= 0; --i){
         if(this->at(i) < o.at(i)) return true;
         if(this->at(i) > o.at(i)) return false;
       }
-      if((shift ? *shift : 0) <= (o.shift ? *o.shift : 0)) return false;
-      return true;
+      return false;
     }
   }
 

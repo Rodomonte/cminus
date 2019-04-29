@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "../cminus.hh"
 
+//! neg
 int main(){
   num a,b,c;
 
@@ -13,10 +14,6 @@ int main(){
   printf("=\n");
   a = b = 2;
   c = 4;
-
-  //!
-  str s(a.string()), t(b.string()), u(c.string());
-  printf("%s %s %s\n", s.c_str(), t.c_str(), u.c_str());
 
   printf("==\n");
   assert(a == 2);
