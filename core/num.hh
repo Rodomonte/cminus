@@ -101,8 +101,7 @@ struct num : mem {
     int i,j;
     llu s;
     num n;
-    for(j = 0, s = (1LLU << 63); j < 64; ++j, s >>= 1)
-      //!
+    // for(j = 0, s = (1LLU << 63); j < 64; ++j, s >>= 1)
   }
 
   void _rshift(const num& a, int b, num* d) const { // a,b > 0
@@ -128,25 +127,33 @@ struct num : mem {
   }
   bool operator!=(const num& o) const { return !(*this == o); }
 
+  bool llu_lt(llu a, llu b) const {
+    int i;
+    for(i = 0; i < 64; ++i){
+      if((a & (1LLU << i)) < (b & (1LLU << i))) return true;
+      if((a & (1LLU << i)) > (b & (1LLU << i))) return false;
+    }
+    return false;
+  }
+
   bool operator<(const num& o) const {
     if(neg && !o.neg) return true;
     if(!neg && o.neg) return false;
-    llu x = size(), y = o.size();
     if(size() < o.size()) return true;
     if(size() > o.size()) return false;
 
     int i;
     if(neg){
       for(i = 0; i < size(); ++i){
-        if(this->at(i) < o.at(i)) return false;
-        if(this->at(i) > o.at(i)) return true;
+        if(llu_lt(at(i), o.at(i))) return false;
+        if(llu_lt(o.at(i), at(i))) return true;
       }
       return false;
 
     }else{
       for(i = size()-1; i >= 0; --i){
-        if(this->at(i) < o.at(i)) return true;
-        if(this->at(i) > o.at(i)) return false;
+        if(llu_lt(at(i), o.at(i))) return true;
+        if(llu_lt(o.at(i), at(i))) return false;
       }
       return false;
     }
@@ -175,7 +182,7 @@ struct num : mem {
   num& operator=(ll n){
     clear();
     neg = (n < 0);
-    (*this)[0] = absl(n);
+    (*this)[0] = rev(absl(n));
     return *this;
   }
 

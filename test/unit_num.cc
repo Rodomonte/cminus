@@ -15,8 +15,8 @@ int main(){
   a = b = 2;
   c = 4;
 
-  printf("string: %s %s %s\n",
-         a.string().c_str(), b.string().c_str(), c.string().c_str());
+  // printf("string: %s %s %s\n",
+  //        a.string().c_str(), b.string().c_str(), c.string().c_str());
 
   printf("==\n");
   assert(a == 2);

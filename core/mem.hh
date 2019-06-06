@@ -33,7 +33,7 @@ struct mem : type {
     if(size() != o.size()) return false;
     int i;
     for(i = 0; i < size(); ++i)
-      if(block.at(i) != o.at(i)) return false;
+      if(at(i) != o.at(i)) return false;
     return true;
   }
 
