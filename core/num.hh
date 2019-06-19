@@ -9,15 +9,22 @@
 // Little-endian
 struct num : mem {
   bool neg;
+  int len;
   num *err; //!
 
-  num(): neg(false), err(NULL) {}
-  num(ll n): neg(n < 0), err(NULL) { (*this)[0] = rev(absl(n)); }
+  num(): neg(false), len(1), err(NULL) {}
+  num(ll n): neg(n < 0), err(NULL) {
+    int i;
+    (*this)[0] = rev(absl(n));
+    for(i = 63; i >= 0; --i)
+      if((1LLU << i) & at(0)) break;
+    len = i+1;
+  }
   num(int n): num((ll)n) {}
   num(const num& o){ *this = o; }
 
   virtual num* clone() const { cl_num.pb(*this); return &cl_num.back(); }
-  virtual void clear(){ mem::clear(), neg = false, err = NULL; }
+  virtual void clear(){ mem::clear(), neg = false, len = 1, err = NULL; }
 
   int _int() const { return (rev(block[0]) & 0xFFFF) * (neg ? -1 : 1); }
 
@@ -28,11 +35,11 @@ struct num : mem {
     num n(*this);
     vec<char> v;
 
-    while(n > 0)
-      v.pb(rev((n % 10)[0]) & 0xFF), n /= 10;
-    if(neg) s = str("-");
-    for(i = v.size()-1; i >= 0; --i)
-      s += str(v[i] + '0');
+    // while(n > 0)
+    //   v.pb(rev((n % 10)[0]) & 0xFF), n /= 10;
+    // if(neg) s = str("-");
+    // for(i = v.size()-1; i >= 0; --i)
+    //   s += str(v[i] + '0');
     return s;
   }
 
@@ -45,35 +52,63 @@ struct num : mem {
     llu s;
     num x,y;
 
-    c = false, n = min(a.size(), b.size());
-    if(d->size() < n) d->resize(n);
+    n = min(a.size(), b.size());
     for(i = 0; i < n; ++i){
+      if(d->size() < i+1) d->resize(i+1);
       for(j = 0, s = (1LLU << 63), c = false; j < 64; ++j, s >>= 1){
         t = c ? 1 : 0;
         if(a.at(i) & s) ++t;
         if(b.at(i) & s) ++t;
         c = (t > 1) ? true : false;
         if(!(t & 1) && ((*d)[i] & s)) (*d)[i] ^= s; // on->off
-        if((t & 1) && !((*d)[i] & s)) (*d)[i] |= s; // off->on
+        else if((t & 1) && !((*d)[i] & s)) (*d)[i] |= s; // off->on
       }
     }
 
     n = max(a.size(), b.size());
-    d->resize(n);
     for(; i < n; ++i){
+      if(d->size() < i+1) d->resize(i+1);
       for(j = 0, s = (1LLU << 63); j < 64; ++j, s >>= 1){
         t = c ? 1 : 0;
         if(a.size() > b.size() && (a.at(i) & s)) ++t;
         if(b.size() > a.size() && (b.at(i) & s)) ++t;
         c = (t > 1) ? true : false;
-        if(t & 1) (*d)[i] |= s;
+        if(!(t & 1) && ((*d)[i] & s)) (*d)[i] ^= s;
+        else if((t & 1) && !((*d)[i] & s)) (*d)[i] |= s;
       }
     }
     if(c) d->extend(), d->block.back() = 1;
   }
 
   void _sub(const num& a, const num& b, num* d) const { // a > b > 0
+    bool c;
+    int i,j, n,t;
+    llu s;
+    num x,y;
 
+    for(i = 0; i < b.size(); ++i){
+      if(d->size() < i+1) d->resize(i+1);
+      for(j = 0, s = (1LLU << 63), c = false; j < 64; ++j, s >>= 1){
+        if((a.at(i) & s) && (b.at(i) & s)){
+          if(c && !((*d)[i] & s)) (*d)[i] |= s;
+          else if(!c && ((*d)[i] & s)) (*d)[i] ^= s;
+        }else if((a.at(i) & s) && !(b.at(i) & s)){
+          if(c){
+            c = false;
+            if((*d)[i] & s) (*d)[i] ^= s;
+          }else if(!c && !((*d)[i] & s)) (*d)[i] |= s;
+        }else if(!(a.at(i) & s) && (b.at(i) & s)){
+          if(!c){
+            c = true;
+            if(!((*d)[i] & s)) (*d)[i] |= s;
+          }else if(c && ((*d)[i] & s)) (*d)[i] ^= s;
+        }
+      }
+    }
+
+    for(; i < a.size(); ++i){
+      if(d->size() < i+1) d->resize(i+1);
+    }
   }
 
   void _mul(const num& a, const num& b, num* d) const { // a,b > 0
