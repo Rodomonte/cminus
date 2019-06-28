@@ -55,7 +55,6 @@ struct num : mem {
     // if(neg) s = str("-");
     // for(i = v.size()-1; i >= 0; --i)
     //   s += str(v[i] + '0');
-    printf("Returning %s from _string()\n", s.c_str());
     return s;
   }
 
@@ -102,9 +101,6 @@ struct num : mem {
     int i,j, n,t;
     llu s;
     num x,y;
-
-    str as = a._string(), bs = b._string();
-    printf("%s - %s\n", as.c_str(), bs.c_str());
 
     for(i = 0; i < b.size(); ++i){
       if(d->size() < i+1) d->resize(i+1);
@@ -269,7 +265,7 @@ struct num : mem {
     }else if(!neg && o.neg){
       neg = true;
       if(*this == o) *this = 0, neg = false;
-      else if(*this < o) _sub(o, *this, this);
+      else if(*this > o) _sub(o, *this, this);
       else _sub(*this, o, this), neg = false;
     }else _add(*this, o, this);
     return *this;

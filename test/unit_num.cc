@@ -19,6 +19,7 @@ int main(){
   // printf("string: %s %s %s\n",
   //        a.string().c_str(), b.string().c_str(), c.string().c_str());
 
+  // 1-7
   printf("==\n");
   assert(a == 2);
   assert(!(a == 3));
@@ -28,6 +29,7 @@ int main(){
   assert(!(c == b));
   assert(!(a == d));
 
+  // 8-14
   printf("!=\n");
   assert(!(a != 2));
   assert(a != 3);
@@ -37,6 +39,7 @@ int main(){
   assert(c != b);
   assert(a != d);
 
+  // 15-21
   printf("<\n");
   assert(!(a < 2));
   assert(a < 3);
@@ -46,6 +49,7 @@ int main(){
   assert(!(c < b));
   assert(d < 0);
 
+  // 22-28
   printf(">\n");
   assert(a > 1);
   assert(!(a > 2));
@@ -55,6 +59,7 @@ int main(){
   assert(c > b);
   assert(a > d);
 
+  // 29-35
   printf("<=\n");
   assert(!(a <= 1));
   assert(a <= 2);
@@ -64,6 +69,7 @@ int main(){
   assert(!(c <= b));
   assert(d <= 0);
 
+  // 36-42
   printf(">=\n");
   assert(a >= 2);
   assert(!(a >= 3));
@@ -73,6 +79,7 @@ int main(){
   assert(c >= b);
   assert(a >= d);
 
+  // 43-48
   printf("+\n");
   assert(a + 0 == a);
   assert(a + 2 == c);
@@ -81,18 +88,21 @@ int main(){
   assert(a + d == 0);
   assert(c + d == a);
 
+  // 49-50
   printf("+=\n");
   assert((a += b) == c);
   assert((d += d) == -4);
 
+  // 51-56
   printf("-\n");
   assert(a - 0 == a);
   assert(a - b == b);
   assert(c - c == 0);
-  assert(a - d == c);
-  assert(d - a == -4);
+  assert(a - d == 8);
+  assert(d - a == -8);
   assert(d - d == 0);
 
+  // 57-58
   printf("-=\n");
   assert((a -= b) == b);
   assert((d -= a) == -6);
