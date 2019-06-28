@@ -131,5 +131,15 @@ int main(){
   assert((a /= b) == b);
   assert((d /= 9) == c);
 
+  // 72-73
+  printf("<<\n");
+  assert((a << 1) == c);
+  assert((a << 2) == (c << 1));
+
+  // 74-75
+  printf("<<=\n");
+  assert((a <<= 1) == c);
+  assert((b <<= 2) == (c << 1));
+
   return 0;
 }

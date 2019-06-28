@@ -16,9 +16,7 @@ struct num : mem {
   num(ll n): neg(n < 0), err(NULL) {
     int i;
     (*this)[0] = rev(absl(n));
-    for(i = 63; i >= 0; --i)
-      if((1LLU << i) & at(0)) break;
-    len = i+1;
+    setlen();
   }
   num(int n): num((ll)n) {}
   num(const num& o){ *this = o; }
@@ -31,6 +29,7 @@ struct num : mem {
   void setlen(){
     int i;
     llu s;
+    if(size() == 1 && back() == 0){ len = 1; return; }
     for(i = 0, s = 1; i < 64; ++i, s <<= 1)
       if(back() & s) break;
     len = (size() - 1) * 64 + (64 - i);
@@ -47,14 +46,6 @@ struct num : mem {
         else s += "0";
       }
     }
-
-    // num n(*this);
-    // vec<char> v;
-    // while(n > 0)
-    //   v.pb(rev((n % 10)[0]) & 0xFF), n /= 10;
-    // if(neg) s = str("-");
-    // for(i = v.size()-1; i >= 0; --i)
-    //   s += str(v[i] + '0');
     return s;
   }
 
@@ -137,27 +128,50 @@ struct num : mem {
     d->setlen();
   }
 
+  void split_num(const num& a, num* lo, num* hi, int m) const {
+    *lo = (a & ((num(1) << m) - 1));
+    *hi = (a >> m);
+  }
+
+  num karatsuba(const num& a, const num& b) const {
+    if(!a || !b) return num(0);
+    if(a == 1) return b;
+    if(b == 1) return a;
+    int m;
+    num c,d,e, w,x,y,z;
+    m = (min(a.len, b.len) >> 1);
+    split_num(a, &w, &x, m);
+    split_num(b, &y, &z, m);
+    c = karatsuba(w, y);
+    d = karatsuba(w + x, y + z);
+    e = karatsuba(x, z);
+    return (e << (m << 1)) + ((d - c - e) << m) + c;
+  }
+
   // Karatsuba
   void _mul(const num& a, const num& b, num* d) const { // a,b > 0
     if(a < (1LLU << 31) && b < (1LLU << 31)){
       *d = num((ll)rev(a.at(0)) * (ll)rev(b.at(0)));
       return;
     }
-
-    d->setlen();
+    *d = karatsuba(a, b);
   }
 
   void _div(const num& a, const num& b, num* d) const { // a,b > 0
-    if(a < (1LLU << 31) && b < (1LLU << 31)){
+    if(a < (1LLU << 31) && b < (1LLU << 31))
       *d = num((ll)rev(a.at(0)) / (ll)rev(b.at(0)));
-      return;
-    }
+    else{
 
+    }
     d->setlen();
   }
 
   void _mod(const num& a, const num& b, num* d) const { // a,b > 0
+    if(a < (1LLU << 31) && b < (1LLU << 31))
+      *d = num((ll)rev(a.at(0)) % (ll)rev(b.at(0)));
+    else{
 
+    }
     d->setlen();
   }
 
@@ -171,17 +185,33 @@ struct num : mem {
     d->setlen();
   }
 
+  // Actually shifts right due to little-endianness
   void _lshift(const num& a, int b, num* d) const { // a,b > 0
-    int i,j;
-    llu s;
-    num n;
-    // for(j = 0, s = (1LLU << 63); j < 64; ++j, s >>= 1)
-    d->setlen();
+    int i,j,k,l;
+    i = a.size() - 1, j = a.len % 64, j = j ? 64 - j : 0;
+    d->len = a.len + b;
+    d->resize((d->len + 63) >> 6);
+    k = d->size() - 1, l = d->len % 64, l = l ? 64 - l : 0;
+    while(i >= 0){
+      if((a.at(i) & (1LLU << j)) && !((*d)[k] & (1LLU << l)))
+        (*d)[k] |= (1LLU << l);
+      else if(!(a.at(i) & (1LLU << j)) && ((*d)[k] & (1LLU << l)))
+        (*d)[k] ^= (1LLU << l);
+      if(j == 63) j = 0, --i;
+      else ++j;
+      if(l == 63) l = 0, --k;
+      else ++l;
+    }
+    while(k >= 0){
+      if((*d)[k] & (1LLU << l)) (*d)[k] ^= (1LLU << l);
+      if(l == 63) l = 0, --k;
+      else ++l;
+    }
   }
 
+  // Actually shifts left due to little-endianness
   void _rshift(const num& a, int b, num* d) const { // a,b > 0
 
-    d->setlen();
   }
 
   void _and(const num& a, const num& b, num* d) const { // a,b > 0
@@ -255,6 +285,7 @@ struct num : mem {
     if(o.err)
       cl_num.pb(*(o.err));
     block = o.block;
+    len = o.len;
     return *this;
   }
 
@@ -262,6 +293,7 @@ struct num : mem {
     clear();
     neg = (n < 0);
     (*this)[0] = rev(absl(n));
+    setlen();
     return *this;
   }
 
@@ -321,6 +353,7 @@ struct num : mem {
   }
 
   num& operator<<=(const num& o){
+    if(o + (size()<<6) >= SHIFT_MAX) kill("Shift max exceeded\n");
     int n = o._int();
     if(n < 0) _rshift(*this, -n, this);
     _lshift(*this, n, this);
@@ -328,7 +361,6 @@ struct num : mem {
   }
 
   num& operator>>=(const num& o){
-    if(o + (size()<<6) >= SHIFT_MAX) kill("Shift max exceeded\n");
     int n = o._int();
     if(n < 0) _lshift(*this, -n, this);
     _rshift(*this, n, this);
