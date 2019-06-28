@@ -6,12 +6,11 @@
 
 //! neg
 int main(){
-  num a,b,c,d;
-
   ASSERT = 0;
-  printf("Operator Test:\n");
+  printf("Operator Test (small numbers):\n");
 
   printf("=\n");
+  num a,b,c,d;
   a = b = 2;
   c = 4;
   d = -2;
@@ -106,6 +105,31 @@ int main(){
   printf("-=\n");
   assert((a -= b) == b);
   assert((d -= a) == -6);
+
+  // 59-63
+  printf("*\n");
+  assert(a * b == c);
+  assert(a * 0 == 0);
+  assert(a * 1 == a);
+  assert(a * -3 == d);
+  assert(c * d == -24);
+
+  // 64-65
+  printf("*=\n");
+  assert((a *= b) == c);
+  assert((d *= d) == 36);
+
+  // 66-69
+  printf("/\n");
+  assert(a / 1 == a);
+  assert(a / 2 == b);
+  assert(a / a == 1);
+  assert(d / 9 == c);
+
+  // 70-71
+  printf("/=\n");
+  assert((a /= b) == b);
+  assert((d /= 9) == c);
 
   return 0;
 }

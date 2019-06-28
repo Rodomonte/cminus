@@ -137,12 +137,21 @@ struct num : mem {
     d->setlen();
   }
 
+  // Karatsuba
   void _mul(const num& a, const num& b, num* d) const { // a,b > 0
+    if(a < (1LLU << 31) && b < (1LLU << 31)){
+      *d = num((ll)rev(a.at(0)) * (ll)rev(b.at(0)));
+      return;
+    }
 
     d->setlen();
   }
 
   void _div(const num& a, const num& b, num* d) const { // a,b > 0
+    if(a < (1LLU << 31) && b < (1LLU << 31)){
+      *d = num((ll)rev(a.at(0)) / (ll)rev(b.at(0)));
+      return;
+    }
 
     d->setlen();
   }
