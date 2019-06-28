@@ -12,8 +12,10 @@ struct mem : type {
   mem(){ block.pb(0); }
 
   virtual mem* clone() const { cl_mem.pb(*this); return &cl_mem.back(); }
-  virtual int size() const { return block.size(); }
   virtual void clear(){ block.clear(), block.pb(0); }
+
+  virtual int size() const { return block.size(); }
+  llu back() const { return block.back(); }
 
   //!
   virtual str _string() const { return ""; }

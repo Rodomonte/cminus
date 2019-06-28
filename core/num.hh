@@ -28,18 +28,34 @@ struct num : mem {
 
   int _int() const { return (rev(block[0]) & 0xFFFF) * (neg ? -1 : 1); }
 
-  virtual str _string() const {
-    if(!(*this)) return str('0');
+  void setlen(){
     int i;
-    str s;
-    num n(*this);
-    vec<char> v;
+    llu s;
+    for(i = 0, s = 1; i < 64; ++i, s <<= 1)
+      if(back() & s) break;
+    len = (size() - 1) * 64 + (64 - i);
+  }
 
+  virtual str _string() const {
+    if(!(*this)) return str("0");
+    int i,j;
+    str s;
+    if(neg) s += "-";
+    for(i = 0; i < size(); ++i){
+      for(j = 63; j >= 0; --j){
+        if(at(i) & (1LLU << j)) s += "1";
+        else s += "0";
+      }
+    }
+
+    // num n(*this);
+    // vec<char> v;
     // while(n > 0)
     //   v.pb(rev((n % 10)[0]) & 0xFF), n /= 10;
     // if(neg) s = str("-");
     // for(i = v.size()-1; i >= 0; --i)
     //   s += str(v[i] + '0');
+    printf("Returning %s from _string()\n", s.c_str());
     return s;
   }
 
@@ -78,6 +94,7 @@ struct num : mem {
       }
     }
     if(c) d->extend(), d->block.back() = 1;
+    d->setlen();
   }
 
   void _sub(const num& a, const num& b, num* d) const { // a > b > 0
@@ -85,6 +102,9 @@ struct num : mem {
     int i,j, n,t;
     llu s;
     num x,y;
+
+    str as = a._string(), bs = b._string();
+    printf("%s - %s\n", as.c_str(), bs.c_str());
 
     for(i = 0; i < b.size(); ++i){
       if(d->size() < i+1) d->resize(i+1);
@@ -108,19 +128,32 @@ struct num : mem {
 
     for(; i < a.size(); ++i){
       if(d->size() < i+1) d->resize(i+1);
+      for(j = 0, s = (1LLU << 63); j < 64; ++j, s >>= 1){
+        if(c){
+          (*d)[i] ^= s;
+          if(a.at(i) & s) c = false;
+        }else{
+          if(a.at(i) & s) (*d)[i] |= s;
+          else (*d)[i] ^= s;
+        }
+      }
     }
+    d->setlen();
   }
 
   void _mul(const num& a, const num& b, num* d) const { // a,b > 0
 
+    d->setlen();
   }
 
   void _div(const num& a, const num& b, num* d) const { // a,b > 0
 
+    d->setlen();
   }
 
   void _mod(const num& a, const num& b, num* d) const { // a,b > 0
 
+    d->setlen();
   }
 
   void _pow(const num& n, const num& e, num* d) const { // a,b > 0
@@ -130,6 +163,7 @@ struct num : mem {
     //   n = n * n % MOD, e >>= 1;
     // }
     // return (int)r;
+    d->setlen();
   }
 
   void _lshift(const num& a, int b, num* d) const { // a,b > 0
@@ -137,22 +171,27 @@ struct num : mem {
     llu s;
     num n;
     // for(j = 0, s = (1LLU << 63); j < 64; ++j, s >>= 1)
+    d->setlen();
   }
 
   void _rshift(const num& a, int b, num* d) const { // a,b > 0
 
+    d->setlen();
   }
 
   void _and(const num& a, const num& b, num* d) const { // a,b > 0
 
+    d->setlen();
   }
 
   void _or(const num& a, const num& b, num* d) const { // a,b > 0
 
+    d->setlen();
   }
 
   void _xor(const num& a, const num& b, num* d) const { // a,b > 0
 
+    d->setlen();
   }
 
   bool operator()() const { return *this != 0; }
