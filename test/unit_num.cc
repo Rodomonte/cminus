@@ -141,5 +141,15 @@ int main(){
   assert((a <<= 1) == c);
   assert((b <<= 2) == (c << 1));
 
+  // 76-77
+  printf(">>\n");
+  assert((a >> 1) == 2);
+  assert((b >> 2) == 2);
+
+  // 78-79
+  printf(">>=\n");
+  assert((a >>= 1) == 2);
+  assert((b >>= 2) == a);
+
   return 0;
 }

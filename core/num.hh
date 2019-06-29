@@ -211,7 +211,27 @@ struct num : mem {
 
   // Actually shifts left due to little-endianness
   void _rshift(const num& a, int b, num* d) const { // a,b > 0
-
+    if(b >= a.len){ *d = 0, d->len = 1; return; }
+    int i,j,k,l;
+    i = (b >> 6), j = b % 64, j = j ? 64 - j : 0;
+    k = l = 0;
+    while((i << 6) + (j ? 64 - j : 0) <= a.len){
+      if((a.at(i) & (1LLU << j)) && !((*d)[k] & (1LLU << l)))
+        (*d)[k] |= (1LLU << l);
+      else if(!(a.at(i) & (1LLU << j)) && ((*d)[k] & (1LLU << l)))
+        (*d)[k] ^= (1LLU << l);
+      if(j == 63) j = 0, --i;
+      else ++j;
+      if(l == 63) l = 0, --k;
+      else ++l;
+    }
+    while((k << 6) + (l ? 64 - l : 0) <= a.len){
+      if(a.at(k) & (1LLU << l)) (*d)[k] ^= (1LLU << l);
+      if(l == 63) l = 0, --k;
+      else ++l;
+    }
+    d->len = a.len - b;
+    d->resize((d->len + 63) >> 6);
   }
 
   void _and(const num& a, const num& b, num* d) const { // a,b > 0
