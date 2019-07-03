@@ -213,21 +213,21 @@ struct num : mem {
   void _rshift(const num& a, int b, num* d) const { // a,b > 0
     if(b >= a.len){ *d = 0, d->len = 1; return; }
     int i,j,k,l;
-    i = (b >> 6), j = b % 64, j = j ? 64 - j : 0;
+    i = (b >> 6), j = b % 64;
     k = l = 0;
-    while((i << 6) + (j ? 64 - j : 0) <= a.len){
-      if((a.at(i) & (1LLU << j)) && !((*d)[k] & (1LLU << l)))
-        (*d)[k] |= (1LLU << l);
-      else if(!(a.at(i) & (1LLU << j)) && ((*d)[k] & (1LLU << l)))
-        (*d)[k] ^= (1LLU << l);
-      if(j == 63) j = 0, --i;
+    while((i << 6) + j <= a.len){
+      if((a.at(i) & (1LLU << (63 - j))) && !((*d)[k] & (1LLU << (63 - l))))
+        (*d)[k] |= (1LLU << (63 - l));
+      else if(!(a.at(i) & (1LLU << (63 - j))) && ((*d)[k] & (1LLU << (63 - l))))
+        (*d)[k] ^= (1LLU << (63 - l));
+      if(j == 63) j = 0, ++i;
       else ++j;
-      if(l == 63) l = 0, --k;
+      if(l == 63) l = 0, ++k;
       else ++l;
     }
-    while((k << 6) + (l ? 64 - l : 0) <= a.len){
-      if(a.at(k) & (1LLU << l)) (*d)[k] ^= (1LLU << l);
-      if(l == 63) l = 0, --k;
+    while((k << 6) + l <= a.len){
+      if(a.at(k) & (1LLU << (63 - l))) (*d)[k] ^= (1LLU << (63 - l));
+      if(l == 63) l = 0, ++k;
       else ++l;
     }
     d->len = a.len - b;
