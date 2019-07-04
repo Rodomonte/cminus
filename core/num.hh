@@ -66,8 +66,8 @@ struct num : mem {
         if(a.at(i) & s) ++t;
         if(b.at(i) & s) ++t;
         c = (t > 1) ? true : false;
-        if(!(t & 1) && ((*d)[i] & s)) (*d)[i] ^= s; // on->off
-        else if((t & 1) && !((*d)[i] & s)) (*d)[i] |= s; // off->on
+        if(!(t & 1) && ((*d)[i] & s)) (*d)[i] ^= s;
+        else if((t & 1) && !((*d)[i] & s)) (*d)[i] |= s;
       }
     }
 
@@ -109,7 +109,7 @@ struct num : mem {
             c = true;
             if(!((*d)[i] & s)) (*d)[i] |= s;
           }else if(c && ((*d)[i] & s)) (*d)[i] ^= s;
-        }
+        }else if(c) (*d)[i] |= s;
       }
     }
 
@@ -148,7 +148,6 @@ struct num : mem {
     return (e << (m << 1)) + ((d - c - e) << m) + c;
   }
 
-  // Karatsuba
   void _mul(const num& a, const num& b, num* d) const { // a,b > 0
     if(a < (1LLU << 31) && b < (1LLU << 31)){
       *d = num((ll)rev(a.at(0)) * (ll)rev(b.at(0)));
@@ -234,7 +233,7 @@ struct num : mem {
     d->resize((d->len + 63) >> 6);
   }
 
-  void _and(const num& a, const num& b, num* d) const { // a,b > 0
+  void _bitand(const num& a, const num& b, num* d) const { // a,b > 0
     int i,j,n;
     n = min(a.size(), b.size());
     d->resize(n);
@@ -249,7 +248,7 @@ struct num : mem {
     d->setlen();
   }
 
-  void _or(const num& a, const num& b, num* d) const { // a,b > 0
+  void _bitor(const num& a, const num& b, num* d) const { // a,b > 0
     int i,j,n;
     n = max(a.size(), b.size());
     d->resize(n);
@@ -421,12 +420,12 @@ struct num : mem {
   }
 
   num& operator&=(const num& o){
-    _and(*this, o, this);
+    _bitand(*this, o, this);
     return *this;
   }
 
   num& operator|=(const num& o){
-    _or(*this, o, this);
+    _bitor(*this, o, this);
     return *this;
   }
 
@@ -460,8 +459,8 @@ struct num : mem {
   num operator|(const num& o) const { num n(*this); n |= o; return n; }
   num XOR(const num& o) const { num n; _xor(*this, o, &n); return n; }
 
-  num operator||(const num& o) const { } //!
-  num operator&&(const num& o) const { } //!
+  bool operator&&(const num& o) const { return *this != 0 && o != 0; }
+  bool operator||(const num& o) const { return *this != 0 || o != 0; }
 
   num operator-() const {
     num n(*this);
@@ -490,8 +489,8 @@ struct num : mem {
   num operator|(ll v) const { num n(*this); n |= num(v); return n; }
   num XOR(ll v) const { return XOR(num(v)); }
 
-  num operator||(ll v) const { } //!
-  num operator&&(ll v) const { } //!
+  bool operator&&(ll v) const { return *this && num(v); }
+  bool operator||(ll v) const { return *this || num(v); }
 };
 
 

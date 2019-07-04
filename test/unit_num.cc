@@ -4,19 +4,15 @@
 #include <stdlib.h>
 #include "../cminus.hh"
 
-//! neg
 int main(){
   ASSERT = 0;
-  printf("Operator Test (small numbers):\n");
+  printf("\nOperator Test:\n\nSmall numbers\n");
 
   printf("=\n");
   num a,b,c,d;
   a = b = 2;
   c = 4;
   d = -2;
-
-  // printf("string: %s %s %s\n",
-  //        a.string().c_str(), b.string().c_str(), c.string().c_str());
 
   // 1-7
   printf("==\n");
@@ -165,6 +161,18 @@ int main(){
   printf("XOR\n");
   assert(num(0).XOR(7) == 7);
   assert(num(3).XOR(6) == 5);
+
+  // 86-
+  printf("Complex\n");
+  assert((num(1) << 20) - 1 == num((1 << 20) - 1));
+
+  printf("\nBig numbers\n");
+  a = (1LLU << 62) + (1LLU << 20);
+  b = (1LLU << 62);
+
+  printf("*\n");
+  assert(a * a == (num(1) << 124) + (num(1) << 83) + (num(1) << 40));
+  assert(b * b == (num(1) << 124));
 
   return 0;
 }
