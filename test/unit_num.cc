@@ -151,5 +151,20 @@ int main(){
   assert((a >>= 1) == 2);
   assert((b >>= 2) == a);
 
+  // 80-81
+  printf("&\n");
+  assert((num(5) & 12) == 4);
+  assert((num(1) & 4) == 0);
+
+  // 82-83
+  printf("|\n");
+  assert((num(1) | 4) == 5);
+  assert((num(0) | 7) == 7);
+
+  // 84-85
+  printf("XOR\n");
+  assert(num(0).XOR(7) == 7);
+  assert(num(3).XOR(6) == 5);
+
   return 0;
 }

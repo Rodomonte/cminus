@@ -235,17 +235,50 @@ struct num : mem {
   }
 
   void _and(const num& a, const num& b, num* d) const { // a,b > 0
-
+    int i,j,n;
+    n = min(a.size(), b.size());
+    d->resize(n);
+    for(i = 0; i < n; ++i){
+      for(j = 0; j < 64; ++j){
+        if(!((a.at(i) & (1LLU << j)) && (b.at(i) & (1LLU << j))) &&
+           ((*d)[i] & (1LLU << j))) (*d)[i] ^= (1LLU << j);
+        else if(((a.at(i) & (1LLU << j)) && (b.at(i) & (1LLU << j))) &&
+           !((*d)[i] & (1LLU << j))) (*d)[i] |= (1LLU << j);
+      }
+    }
     d->setlen();
   }
 
   void _or(const num& a, const num& b, num* d) const { // a,b > 0
-
+    int i,j,n;
+    n = max(a.size(), b.size());
+    d->resize(n);
+    for(i = 0; i < n; ++i){
+      for(j = 0; j < 64; ++j){
+        if((!(a.at(i) & (1LLU << j)) && !(b.at(i) & (1LLU << j))) &&
+           ((*d)[i] & (1LLU << j))) (*d)[i] ^= (1LLU << j);
+        else if(((a.at(i) & (1LLU << j)) || (b.at(i) & (1LLU << j))) &&
+           !((*d)[i] & (1LLU << j))) (*d)[i] |= (1LLU << j);
+      }
+    }
     d->setlen();
   }
 
   void _xor(const num& a, const num& b, num* d) const { // a,b > 0
-
+    int i,j,n;
+    n = max(a.size(), b.size());
+    for(i = 0; i < n; ++i){
+      for(j = 0; j < 64; ++j){
+        if(((!(a.at(i) & (1LLU << j)) && !(b.at(i) & (1LLU << j))) ||
+           ((a.at(i) & (1LLU << j)) && (b.at(i) & (1LLU << j)))) &&
+           ((*d)[i] & (1LLU << j))) (*d)[i] ^= (1LLU << j);
+        else if((((a.at(i) & (1LLU << j)) && !(b.at(i) & (1LLU << j))) ||
+           (!(a.at(i) & (1LLU << j)) && (b.at(i) & (1LLU << j)))) &&
+           !((*d)[i] & (1LLU << j))) (*d)[i] |= (1LLU << j);
+      }
+    }
+    while(!d->back())
+      d->resize(d->size() - 1);
     d->setlen();
   }
 
@@ -425,7 +458,10 @@ struct num : mem {
   num operator>>(const num& o) const { num n(*this); n >>= o; return n; }
   num operator&(const num& o) const { num n(*this); n &= o; return n; }
   num operator|(const num& o) const { num n(*this); n |= o; return n; }
-  num operator||(const num& o) const { num n; _xor(*this, o, &n); return n; }
+  num XOR(const num& o) const { num n; _xor(*this, o, &n); return n; }
+
+  num operator||(const num& o) const { } //!
+  num operator&&(const num& o) const { } //!
 
   num operator-() const {
     num n(*this);
@@ -452,6 +488,10 @@ struct num : mem {
   num operator>>(ll v) const { num n(*this); n >>= num(v); return n; }
   num operator&(ll v) const { num n(*this); n &= num(v); return n; }
   num operator|(ll v) const { num n(*this); n |= num(v); return n; }
+  num XOR(ll v) const { return XOR(num(v)); }
+
+  num operator||(ll v) const { } //!
+  num operator&&(ll v) const { } //!
 };
 
 
