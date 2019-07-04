@@ -169,10 +169,14 @@ int main(){
   printf("\nBig numbers\n");
   a = (1LLU << 62) + (1LLU << 20);
   b = (1LLU << 62);
+  c = (num(1) << 124);
 
   printf("*\n");
   assert(a * a == (num(1) << 124) + (num(1) << 83) + (num(1) << 40));
-  assert(b * b == (num(1) << 124));
+  assert(b * b == c);
+
+  printf("/\n");
+  assert(c / b == b);
 
   return 0;
 }

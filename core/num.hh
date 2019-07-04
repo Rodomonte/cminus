@@ -52,6 +52,11 @@ struct num : mem {
   //!
   virtual str serialize() const { return ""; }
 
+  void setbit(int i, llu m, char b){
+    if(!b && (at(i) & m)) (*this)[i] ^= m;
+    else if(b && !(at(i) & m)) (*this)[i] |= m;
+  }
+
   void _add(const num& a, const num& b, num* d) const { // a,b > 0
     bool c;
     int i,j, n,t;
@@ -66,8 +71,7 @@ struct num : mem {
         if(a.at(i) & s) ++t;
         if(b.at(i) & s) ++t;
         c = (t > 1) ? true : false;
-        if(!(t & 1) && ((*d)[i] & s)) (*d)[i] ^= s;
-        else if((t & 1) && !((*d)[i] & s)) (*d)[i] |= s;
+        d->setbit(i, s, t & 1);
       }
     }
 
@@ -79,8 +83,7 @@ struct num : mem {
         if(a.size() > b.size() && (a.at(i) & s)) ++t;
         if(b.size() > a.size() && (b.at(i) & s)) ++t;
         c = (t > 1) ? true : false;
-        if(!(t & 1) && ((*d)[i] & s)) (*d)[i] ^= s;
-        else if((t & 1) && !((*d)[i] & s)) (*d)[i] |= s;
+        d->setbit(i, s, t & 1);
       }
     }
     if(c) d->extend(), d->block.back() = 1;
@@ -96,33 +99,19 @@ struct num : mem {
     for(i = 0; i < b.size(); ++i){
       if(d->size() < i+1) d->resize(i+1);
       for(j = 0, s = (1LLU << 63), c = false; j < 64; ++j, s >>= 1){
-        if((a.at(i) & s) && (b.at(i) & s)){
-          if(c && !((*d)[i] & s)) (*d)[i] |= s;
-          else if(!c && ((*d)[i] & s)) (*d)[i] ^= s;
-        }else if((a.at(i) & s) && !(b.at(i) & s)){
-          if(c){
-            c = false;
-            if((*d)[i] & s) (*d)[i] ^= s;
-          }else if(!c && !((*d)[i] & s)) (*d)[i] |= s;
-        }else if(!(a.at(i) & s) && (b.at(i) & s)){
-          if(!c){
-            c = true;
-            if(!((*d)[i] & s)) (*d)[i] |= s;
-          }else if(c && ((*d)[i] & s)) (*d)[i] ^= s;
-        }else if(c) (*d)[i] |= s;
+        if((a.at(i) & s) && !(b.at(i) & s)) d->setbit(i, s, !c), c = false;
+        else if(!(a.at(i) & s) && (b.at(i) & s)) d->setbit(i, s, !c), c = true;
+        else d->setbit(i, s, c);
       }
     }
 
     for(; i < a.size(); ++i){
       if(d->size() < i+1) d->resize(i+1);
       for(j = 0, s = (1LLU << 63); j < 64; ++j, s >>= 1){
-        if(c){
-          (*d)[i] ^= s;
+        if(c || !(a.at(i) & s)){
+          d->setbit(i, s, 0);
           if(a.at(i) & s) c = false;
-        }else{
-          if(a.at(i) & s) (*d)[i] |= s;
-          else (*d)[i] ^= s;
-        }
+        }else if(a.at(i) & s) d->setbit(i, s, 1);
       }
     }
     d->setlen();
@@ -156,22 +145,35 @@ struct num : mem {
     *d = karatsuba(a, b);
   }
 
-  void _div(const num& a, const num& b, num* d) const { // a,b > 0
-    if(a < (1LLU << 31) && b < (1LLU << 31))
-      *d = num((ll)rev(a.at(0)) / (ll)rev(b.at(0)));
-    else{
-
+  num divide(const num& a, const num& b, int ret) const {
+    int i,j;
+    num q,r;
+    for(i = a.size()-1; i >= 0; --i){
+      for(j = 0; j < 64; ++j){
+        r <<= 1;
+        r.setbit(0, 1LLU << 63, a.at(i) & (1LLU << j));
+        if(r >= b) r -= b, q.setbit(i, 1LLU << j, 1);
+      }
     }
-    d->setlen();
+    if(ret == 1) return q;
+    else if(ret == 2) return r;
+    else kill("Wrong 3rd parameter to divide()");
+  }
+
+  void _div(const num& a, const num& b, num* d) const { // a,b > 0
+    if(a < (1LLU << 31) && b < (1LLU << 31)){
+      *d = num((ll)rev(a.at(0)) / (ll)rev(b.at(0)));
+      return;
+    }
+    *d = divide(a, b, 1);
   }
 
   void _mod(const num& a, const num& b, num* d) const { // a,b > 0
-    if(a < (1LLU << 31) && b < (1LLU << 31))
+    if(a < (1LLU << 31) && b < (1LLU << 31)){
       *d = num((ll)rev(a.at(0)) % (ll)rev(b.at(0)));
-    else{
-
+      return;
     }
-    d->setlen();
+    *d = divide(a, b, 2);
   }
 
   void _pow(const num& n, const num& e, num* d) const { // a,b > 0
