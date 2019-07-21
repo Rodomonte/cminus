@@ -6,18 +6,14 @@
 #include "def.hh"
 
 
-void kill(const char* e){
-  printf("ERR: %s\n", e);
-  exit(1);
-}
+//------------------------ CONSTANTS ------------------------//
 
-int ASSERT;
-bool assert(bool b){
-  if(!b){
-    printf("After %d success:\n", ASSERT);
-    kill("Assertion failed");
-  }else ++ASSERT;
-}
+const double PI = atan(1) * 4;
+const double PI2 = PI * 2;
+const double PID2 = PI / 2;
+
+
+//------------------------ METHODS ------------------------//
 
 int abs(int a){ return (a < 0) ? -a : a; }
 int min(int a, int b){ return (a < b) ? a : b; }
@@ -30,6 +26,19 @@ ll maxl(ll a, ll b){ return (a > b) ? a : b; }
 double absd(double a){ return (a < 0) ? -a : a; }
 double mind(double a, double b){ return (a < b) ? a : b; }
 double maxd(double a, double b){ return (a > b) ? a : b; }
+
+void kill(const char* e){
+  printf("ERR: %s\n", e);
+  exit(1);
+}
+
+int ASSERT;
+bool assert(bool b){
+  if(!b){
+    printf("After %d success:\n", ASSERT);
+    kill("Assertion failed");
+  }else ++ASSERT;
+}
 
 
 #endif
