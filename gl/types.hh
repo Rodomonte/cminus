@@ -1,7 +1,7 @@
-// TYPES
+// GL TYPES
 
-#ifndef types_hh
-#define types_hh
+#ifndef gl_types_hh
+#define gl_types_hh
 
 
 struct Point {
@@ -14,7 +14,7 @@ struct Point {
                        z(sin(v.xr) * cos(y.vr)) {}
   double len(){ return sqrt(x*x + y*y + z*z); }
 
-  bppl operator==(const Point& p){ return x == p.x && y == p.y && z == p.z; }
+  bool operator==(const Point& p){ return x == p.x && y == p.y && z == p.z; }
   Point& operator=(const Point& p){ x = p.x, y = p.y, z = p.z; }
   Point operator+(const Point& p) const { return Point(x+p.x, y+p.y, z+p.z); }
   void operator+=(const Point& p){ x+=p.x; y+=p.y; z+=p.z; }
@@ -66,7 +66,20 @@ typedef UnitVector UV;
 
 struct Axis : Point, UnitVector {
   Axis(){}
-  Axis(P p, UV v)
+  Axis(P p, UV v) //!
+};
+
+
+struct Cam {
+  P pos;
+  UV look, up;
+
+  Cam(P pos0, UV look0, UV up0): pos(pos0), look(look0), up(up0) {}
+  //! Shift, rotate, tilt functions: update when done
+  void update(){
+    gluLookAt(pos.x, pos.y, pos.z, pos.x+look.x, pos.y+look.y, pos.z+look.z,
+              up.x, up.y, up.z);
+  }
 };
 
 
