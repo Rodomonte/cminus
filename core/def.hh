@@ -8,7 +8,9 @@
 
 #define ll long long
 #define llu unsigned long long
+#define uchar unsigned char
 #define uset std::unordered_set
+#define umap std::unordered_map
 #define iter iterator
 
 #define pb push_back

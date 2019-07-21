@@ -12,11 +12,8 @@ struct Point {
   double x,y,z;
 
   Point(){}
-  Point(Point p): x(p.x), y(p.y), z(p.z) {}
+  Point(const Point& p): x(p.x), y(p.y), z(p.z) {}
   Point(double _x, double _y, double _z): x(_x), y(_y), z(_z) {}
-  Point(UnitVector v): x(cos(v.xr) * cos(v.yr)),
-                       y(sin(v.yr)),
-                       z(sin(v.xr) * cos(y.vr)) {}
   double len(){ return sqrt(x*x + y*y + z*z); }
 
   bool operator==(const Point& p){ return x == p.x && y == p.y && z == p.z; }
@@ -37,11 +34,15 @@ struct UnitVector {
   double xr,yr; // 0 <= xr < 2PI, -PI/2 <= yr <= PI/2
 
   UnitVector(){}
-  UnitVector(UnitVector v): xr(v.xr), yr(v.yr) {}
+  UnitVector(const UnitVector& v): xr(v.xr), yr(v.yr) {}
   UnitVector(double _xr, double _yr): xr(_xr), yr(_yr) { normalize(); }
+
   UnitVector(P p){
     xr = atan(p.x / p.z);
     yr = asin(p.y);
+  }
+  P point(){
+    return P(cos(xr) * cos(yr), sin(yr), sin(xr) * cos(yr));
   }
 
   void normalize(){ //! Does fmod handle negatives?
@@ -54,38 +55,27 @@ struct UnitVector {
     }
   }
 
-  bool operator==(const Point& p){ return xr == p.xr && yr == p.yr; }
+  bool operator==(const UnitVector& v){ return xr == v.xr && yr == v.yr; }
   UnitVector& operator=(const UnitVector& v){ xr = v.xr, yr = v.yr; }
-  UnitVector operator+(const UnitVector& v) const {
-    return UnitVector(v.xr, v.yr); }
-  void operator+=(const UnitVector& v){ x+=p.x; y+=p.y; z+=p.z; }
-  UniitVector operator-(const UnitVector& v) const {
-    return UnitVector(x-p.x, y-p.y, z-p.z); }
-  void operator-=(const UnitVector& v){ x-=p.x; y-=p.y; z-=p.z; }
-  UnitVector operator*(double c) const { return UnitVector(x*c, y*c, z*c); }
-  void operator*=(double c){ x*=c; y*=c; z*=c; }
-  UnitVector operator/(double c) const { return UnitVector(x/c, y/c, z/c); }
-  void operator/=(double c){ x/=c; y/=c; z/=c; }
 };
 typedef UnitVector UV;
 
 
 struct Axis : P, UV {
   Axis(){}
-  Axis(P p, UV v): P(p
+  Axis(P p, UV v): P(p), UV(v) {}
 };
 
 
-struct Cam {
-  P pos;
-  UV look, up;
+//! Cam : Axis
+struct Cam : Axis {
+  double xr;
 
-  Cam(): pos(P(0, 0, -100)), look(UV(0, 0)), up(UV(0, PID2)) {}
-  Cam(P pos0, UV look0, UV up0): pos(pos0), look(look0), up(up0) {}
+  Cam(): Axis(P(0, 0, -100), UV(0, 0)), xr(0) {}
   void update(){
-    P _look(look), _up(up);
-    gluLookAt(pos.x, pos.y, pos.z, pos.x+_look.x, pos.y+_look.y, pos.z+_look.z,
-              _up.x, _up.y, _up.z);
+    // P _look(look), _up(up);
+    // gluLookAt(pos.x, pos.y, pos.z, pos.x+_look.x, pos.y+_look.y, pos.z+_look.z,
+    //           _up.x, _up.y, _up.z);
   }
   //! Shift, rotate, tilt
 };

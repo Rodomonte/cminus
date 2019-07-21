@@ -12,17 +12,15 @@
 #include <string.h>
 #include <pthread.h>
 #include <sys/socket.h>
-#include <stdio.h> //!
-
-//#include <gl/gl.h>
-//#include <sfml/graphics.hpp>
+#include <stdio.h>
+#include <math.h> //! atan
 
 //!
 //#include <queue>
 #include <deque>
 #include <unordered_set>
 //#include <set>
-//#include <unordered_map>
+#include <unordered_map>
 //#include <map>
 //#include <priority_queue>
 
