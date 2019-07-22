@@ -64,20 +64,76 @@ typedef UnitVector UV;
 struct Axis : P, UV {
   Axis(){}
   Axis(P p, UV v): P(p), UV(v) {}
+  void revolve(P& p, double r){
+
+  }
 };
 
 
-//! Cam : Axis
-struct Cam : Axis {
-  double xr;
+struct Obj;
 
-  Cam(): Axis(P(0, 0, -100), UV(0, 0)), xr(0) {}
+struct Scene {
+  int w, h;
+  uset<Obj*> obj;
+  Scene(int _w, int _h): w(_w), h(_h) {}
+  void add(Obj* o){
+    obj.insert(o);
+  }
+  void update();
+  void draw();
+};
+Scene* scene;
+
+
+struct Obj : Axis {
+  double vel_mag, rot;
+  UV vel_dir;
+  Obj(P p, UV v): Axis(p, v) {
+    scene->add(this);
+  }
+  virtual void update() = 0;
+  virtual void draw() = 0;
+};
+
+
+void Scene::update(){
+  uset<Obj*>::iterator it;
+  for(it = obj.begin(); it != obj.end(); ++it)
+    (*it)->update();
+}
+
+void Scene::draw(){
+  uset<Obj*>::iterator it;
+  for(it = obj.begin(); it != obj.end(); ++it)
+    (*it)->draw();
+}
+
+
+struct Cam : P {
+  UV look, up;
+
+  Cam(): P(0, 0, -100), look(0, 0), up(0, PID2) {}
   void update(){
     // P _look(look), _up(up);
     // gluLookAt(pos.x, pos.y, pos.z, pos.x+_look.x, pos.y+_look.y, pos.z+_look.z,
     //           _up.x, _up.y, _up.z);
   }
   //! Shift, rotate, tilt
+};
+
+
+struct Light : Obj {
+
+};
+
+
+struct Sphere : Obj {
+
+};
+
+
+struct Cube : Obj {
+
 };
 
 
