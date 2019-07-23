@@ -30,8 +30,9 @@ void gl_reshape(int w, int h){
 void gl_display(){
   glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  //! scene update
-  //! scene draw
+  scene.update();
+  scene.draw();
+  cam.update();
   glutSwapBuffers();
   glutPostRedisplay();
 }
@@ -45,7 +46,7 @@ void gl_configure(char** argv){
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glutInitWindowSize(win_w, win_h);
-  glutInitWindowPosition(400, 200);
+  glutInitWindowPosition(400, 1200);
   glutCreateWindow(WIN_TITLE);
 
   glutDisplayFunc(gl_display);
@@ -55,6 +56,11 @@ void gl_configure(char** argv){
   glutMotionFunc(gl_motion);
   glutKeyboardFunc(gl_key_down);
   glutKeyboardUpFunc(gl_key_up);
+
+  glEnable(GL_DEPTH_TEST);
+  glMatrixMode(GL_PROJECTION);
+  gluPerspective(40.0, 1.0, 1.0, 200.0);
+  glMatrixMode(GL_MODELVIEW);
 
   glutMainLoop();
 }

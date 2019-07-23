@@ -73,23 +73,30 @@ struct Axis : P, UV {
 struct Obj;
 
 struct Scene {
-  int w, h;
+  //int w, h;
   uset<Obj*> obj;
-  Scene(int _w, int _h): w(_w), h(_h) {}
+  Scene(){}
+  //Scene(int _w, int _h): w(_w), h(_h) {}
   void add(Obj* o){
     obj.insert(o);
+  }
+  void remove(Obj* o){
+    obj.erase(obj.find(o));
   }
   void update();
   void draw();
 };
-Scene* scene;
+Scene scene;
 
 
 struct Obj : Axis {
   double vel_mag, rot;
   UV vel_dir;
+  Obj(){
+    scene.add(this);
+  }
   Obj(P p, UV v): Axis(p, v) {
-    scene->add(this);
+    scene.add(this);
   }
   virtual void update() = 0;
   virtual void draw() = 0;
@@ -111,29 +118,51 @@ void Scene::draw(){
 
 struct Cam : P {
   UV look, up;
-
-  Cam(): P(0, 0, -100), look(0, 0), up(0, PID2) {}
+  Cam(): P(0, 0, -100), look(PID2, 0), up(0, PID2) {}
   void update(){
-    // P _look(look), _up(up);
-    // gluLookAt(pos.x, pos.y, pos.z, pos.x+_look.x, pos.y+_look.y, pos.z+_look.z,
-    //           _up.x, _up.y, _up.z);
+    P l(look.point()), u(up.point());
+    printf("gluLookat(%lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf)\n",
+           x, y, z, x+l.x, y+l.y, z+l.z, u.x, u.y, u.z);
+    gluLookAt(x, y, z, x+l.x, y+l.y, z+l.z, u.x, u.y, u.z);
   }
   //! Shift, rotate, tilt
 };
 
 
 struct Light : Obj {
-
+  Light(){}
+  void update(){}
+  void draw(){
+    float white[] = {1.0, 1.0, 1.0, 1.0};
+    float pos[] = {0.0, 100.0, 0.0, 0.0};
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, white);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+    glLightfv(GL_LIGHT0, GL_POSITION, pos);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+  }
 };
 
 
 struct Sphere : Obj {
-
+  Sphere(){}
+  void update(){}
+  void draw(){
+    glPushMatrix();
+    glColor3d(1.0, 0.0, 0.0);
+    glutSolidSphere(20.0, 10, 10);
+    printf("glutSolidSphere()\n");
+    glPopMatrix();
+  }
 };
 
 
 struct Cube : Obj {
+  Cube(){}
+  void update(){}
+  void draw(){
 
+  }
 };
 
 
