@@ -25,20 +25,24 @@ void gl_key_up(uchar key, int x, int y){
 void gl_reshape(int w, int h){
   win_w = w, win_h = h;
   glViewport(0, 0, w, h);
+  const float ar = (float)w / (float)h;
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 }
 
 void gl_display(){
   glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  cam.update();
   scene.update();
   scene.draw();
-  cam.update();
-  //glFlush();
   glutSwapBuffers();
-  glutPostRedisplay();
 }
 
-void gl_configure(char** argv){
+void gl_start(char** argv){
   win_w = INIT_WIN_W;
   win_h = INIT_WIN_H;
   cam = Cam();
@@ -58,15 +62,10 @@ void gl_configure(char** argv){
   glutKeyboardFunc(gl_key_down);
   glutKeyboardUpFunc(gl_key_up);
 
-  glMatrixMode(GL_PROJECTION);
-  gluPerspective(40.0, 1.0, 1.0, 200.0);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-
-  // glEnable(GL_DEPTH_TEST);
+  glEnable(GL_COLOR_MATERIAL);
   glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
 
+  glEnable(GL_LIGHT0);
   float white[] = {1.0, 1.0, 1.0, 1.0};
   float pos[] = {0.0, 100.0, 0.0, 0.0};
   glMaterialfv(GL_FRONT, GL_DIFFUSE, white);
