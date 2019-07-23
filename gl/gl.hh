@@ -3,8 +3,8 @@
 #ifndef gl_hh
 #define gl_hh
 
-#include <gl/gl.h>
-#include <gl/glut.h>
+#include <GL/gl.h>
+#include <GL/glut.h>
 //#include <sfml/graphics.hpp>
 
 #include "util.hh"
@@ -33,6 +33,7 @@ void gl_display(){
   scene.update();
   scene.draw();
   cam.update();
+  //glFlush();
   glutSwapBuffers();
   glutPostRedisplay();
 }
@@ -44,7 +45,7 @@ void gl_configure(char** argv){
 
   int argc = 1;
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutInitWindowSize(win_w, win_h);
   glutInitWindowPosition(400, 1200);
   glutCreateWindow(WIN_TITLE);
@@ -57,10 +58,20 @@ void gl_configure(char** argv){
   glutKeyboardFunc(gl_key_down);
   glutKeyboardUpFunc(gl_key_up);
 
-  glEnable(GL_DEPTH_TEST);
   glMatrixMode(GL_PROJECTION);
   gluPerspective(40.0, 1.0, 1.0, 200.0);
   glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+  // glEnable(GL_DEPTH_TEST);
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
+
+  float white[] = {1.0, 1.0, 1.0, 1.0};
+  float pos[] = {0.0, 100.0, 0.0, 0.0};
+  glMaterialfv(GL_FRONT, GL_DIFFUSE, white);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
+  glLightfv(GL_LIGHT0, GL_POSITION, pos);
 
   glutMainLoop();
 }

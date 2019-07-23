@@ -121,8 +121,6 @@ struct Cam : P {
   Cam(): P(0, 0, -100), look(PID2, 0), up(0, PID2) {}
   void update(){
     P l(look.point()), u(up.point());
-    printf("gluLookat(%lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf)\n",
-           x, y, z, x+l.x, y+l.y, z+l.z, u.x, u.y, u.z);
     gluLookAt(x, y, z, x+l.x, y+l.y, z+l.z, u.x, u.y, u.z);
   }
   //! Shift, rotate, tilt
@@ -132,15 +130,7 @@ struct Cam : P {
 struct Light : Obj {
   Light(){}
   void update(){}
-  void draw(){
-    float white[] = {1.0, 1.0, 1.0, 1.0};
-    float pos[] = {0.0, 100.0, 0.0, 0.0};
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, white);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, white);
-    glLightfv(GL_LIGHT0, GL_POSITION, pos);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-  }
+  void draw(){}
 };
 
 
@@ -148,11 +138,10 @@ struct Sphere : Obj {
   Sphere(){}
   void update(){}
   void draw(){
-    glPushMatrix();
+    //glPushMatrix();
     glColor3d(1.0, 0.0, 0.0);
-    glutSolidSphere(20.0, 10, 10);
-    printf("glutSolidSphere()\n");
-    glPopMatrix();
+    glutSolidSphere(20.0, 100, 100);
+    //glPopMatrix();
   }
 };
 
