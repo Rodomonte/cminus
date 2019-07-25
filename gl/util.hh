@@ -16,6 +16,33 @@ struct Point {
   Point(double _x, double _y, double _z): x(_x), y(_y), z(_z) {}
   double len(){ return sqrt(x*x + y*y + z*z); }
 
+  void xrot(double r){
+    double xn,yn,zn;
+    double m[3][3] = {{1, 0, 0}, {0, cos(r), -sin(r)}, {0, sin(r), cos(r)}};
+    xn = m[0][0] * x + m[0][1] * y + m[0][2] * z;
+    yn = m[1][0] * x + m[1][1] * y + m[1][2] * z;
+    zn = m[2][0] * x + m[2][1] * y + m[2][2] * z;
+    x = xn, y = yn, z = zn;
+  }
+
+  void yrot(double r){
+    double xn,yn,zn;
+    double m[3][3] = {{cos(r), 0, sin(r)}, {0, 1, 0}, {-sin(r), 0, cos(r)}};
+    xn = m[0][0] * x + m[0][1] * y + m[0][2] * z;
+    yn = m[1][0] * x + m[1][1] * y + m[1][2] * z;
+    zn = m[2][0] * x + m[2][1] * y + m[2][2] * z;
+    x = xn, y = yn, z = zn;
+  }
+
+  void zrot(double r){
+    double xn,yn,zn;
+    double m[3][3] = {{cos(r), -sin(r), 0}, {sin(r), cos(r), 0}, {0, 0, 1}};
+    xn = m[0][0] * x + m[0][1] * y + m[0][2] * z;
+    yn = m[1][0] * x + m[1][1] * y + m[1][2] * z;
+    zn = m[2][0] * x + m[2][1] * y + m[2][2] * z;
+    x = xn, y = yn, z = zn;
+  }
+
   bool operator==(const Point& p){ return x == p.x && y == p.y && z == p.z; }
   Point& operator=(const Point& p){ x = p.x, y = p.y, z = p.z; }
   Point operator+(const Point& p) const { return Point(x+p.x, y+p.y, z+p.z); }
@@ -135,13 +162,15 @@ struct Light : Obj {
 
 
 struct Sphere : Obj {
-  Sphere(){}
+  double rad;
+  Sphere(): rad(20.0) {}
   void update(){}
   void draw(){
-    //glPushMatrix();
+    glPushMatrix();
+    glTranslated(-x, -y, -z);
     glColor3d(1.0, 0.0, 0.0);
-    glutSolidSphere(20.0, 100, 100);
-    //glPopMatrix();
+    glutSolidSphere(rad, 100, 100);
+    glPopMatrix();
   }
 };
 

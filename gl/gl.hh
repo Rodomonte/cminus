@@ -34,12 +34,14 @@ void gl_reshape(int w, int h){
 }
 
 void gl_display(){
+  printf("display called\n");
   glClearColor(0, 0, 0, 0);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   cam.update();
   scene.update();
   scene.draw();
   glutSwapBuffers();
+  glutPostRedisplay();
 }
 
 void gl_start(char** argv){
@@ -51,7 +53,7 @@ void gl_start(char** argv){
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
   glutInitWindowSize(win_w, win_h);
-  glutInitWindowPosition(400, 1200);
+  glutInitWindowPosition(200, 200);
   glutCreateWindow(WIN_TITLE);
 
   glutDisplayFunc(gl_display);
