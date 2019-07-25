@@ -3,6 +3,9 @@
 #ifndef gl_util_hh
 #define gl_util_hh
 
+#include <GL/gl.h>
+#include <SFML/Graphics.hpp>
+
 #include "../core/util.hh"
 
 
@@ -148,7 +151,7 @@ struct Cam : P {
   Cam(): P(0, 0, -100), look(PID2, 0), up(0, PID2) {}
   void update(){
     P l(look.point()), u(up.point());
-    gluLookAt(x, y, z, x+l.x, y+l.y, z+l.z, u.x, u.y, u.z);
+    //gluLookAt(x, y, z, x+l.x, y+l.y, z+l.z, u.x, u.y, u.z);
   }
   //! Shift, rotate, tilt
 };
@@ -169,7 +172,7 @@ struct Sphere : Obj {
     glPushMatrix();
     glTranslated(-x, -y, -z);
     glColor3d(1.0, 0.0, 0.0);
-    glutSolidSphere(rad, 100, 100);
+    //glutSolidSphere(rad, 100, 100);
     glPopMatrix();
   }
 };
@@ -196,6 +199,7 @@ const char* WIN_TITLE = "GL";
 int win_w, win_h;
 P mpos;
 Cam cam;
+sf::RenderWindow* win;
 
 
 //------------------------ METHODS ------------------------//
