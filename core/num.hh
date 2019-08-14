@@ -12,28 +12,14 @@ struct num : mem {
   int len;
   num *err; //!
 
-  num(): neg(false), len(1), err(NULL) {}
-  num(ll n): neg(n < 0), err(NULL) {
-    int i;
-    (*this)[0] = rev(absl(n));
-    setlen();
-  }
-  num(int n): num((ll)n) {}
+  num(){ *this = 0; }
+  num(ll _num){ *this = _num; }
   num(const num& o){ *this = o; }
 
   virtual num* clone() const { cl_num.pb(*this); return &cl_num.back(); }
-  virtual void clear(){ mem::clear(), neg = false, len = 1, err = NULL; }
+  virtual str serialize() const { return ""; } //!
 
-  int _int() const { return (rev(block[0]) & 0xFFFF) * (neg ? -1 : 1); }
-
-  void setlen(){
-    int i;
-    llu s;
-    if(size() == 1 && back() == 0){ len = 1; return; }
-    for(i = 0, s = 1; i < 64; ++i, s <<= 1)
-      if(back() & s) break;
-    len = (size() - 1) * 64 + (64 - i);
-  }
+  virtual int _int() const { return (rev(block[0]) & 0xFFFF) * (neg ? -1 : 1); }
 
   virtual str _string() const {
     if(!(*this)) return str("0");
@@ -49,8 +35,14 @@ struct num : mem {
     return s;
   }
 
-  //!
-  virtual str serialize() const { return ""; }
+  void setlen(){
+    int i;
+    llu s;
+    if(size() == 1 && back() == 0){ len = 1; return; }
+    for(i = 0, s = 1; i < 64; ++i, s <<= 1)
+      if(back() & s) break;
+    len = (size() - 1) * 64 + (64 - i);
+  }
 
   void setbit(int i, llu m, char b){
     if(!b && (at(i) & m)) (*this)[i] ^= m;
@@ -177,13 +169,13 @@ struct num : mem {
   }
 
   void _pow(const num& n, const num& e, num* d) const { // a,b > 0
-    // ll r = 1;
-    // while(e){
-    //   if(e & 1) r = r * n % MOD;
-    //   n = n * n % MOD, e >>= 1;
-    // }
-    // return (int)r;
-    d->setlen();
+    num r(1), s(n), t(e);
+    while(t()){
+      if((t & 1)()) r *= s;
+      s *= s, t >>= 1;
+    }
+    *d = r;
+    printf("Returning %d\n", d->_int());
   }
 
   // Actually shifts right due to little-endianness
@@ -285,7 +277,7 @@ struct num : mem {
 
   bool operator()() const { return *this != 0; }
   bool operator==(const num& o) const {
-    if(neg != o.neg) return false;
+    if(neg != o.neg || len != o.len) return false;
     return mem::operator==(o);
   }
   bool operator!=(const num& o) const { return !(*this == o); }
@@ -334,20 +326,28 @@ struct num : mem {
   bool operator>=(ll n) const { return *this >= num(n); }
 
   num& operator=(const num& o){
-    clear();
+    printf("1\n");
     neg = o.neg;
     if(o.err)
-      cl_num.pb(*(o.err));
+      printf("o=%d\n", o._int()), cl_num.pb(*(o.err)), err = &cl_num.back();
+    printf("2\n");
     block = o.block;
     len = o.len;
+    printf("3\n");
     return *this;
   }
 
   num& operator=(ll n){
+    printf("11\n");
     clear();
+    printf("22\n");
+    err = NULL;
     neg = (n < 0);
+    printf("33\n");
     (*this)[0] = rev(absl(n));
+    printf("44\n");
     setlen();
+    printf("55\n");
     return *this;
   }
 
@@ -400,9 +400,9 @@ struct num : mem {
   }
 
   num& operator^=(const num& o){
+    if(o < 0) kill("Negative power");
     _pow(*this, o, this);
-    //! o < 0: 1 / ans
-    if(*this < 0 && !(o & 1)()) neg = false;
+    if(*this < 0 && !(o & 1)) neg = false;
     return *this;
   }
 

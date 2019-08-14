@@ -32,6 +32,9 @@ vec<mem> cl_mem;
 struct num;
 vec<num> cl_num;
 
+struct frac;
+vec<frac> cl_frac;
+
 struct cube;
 vec<cube> cl_cube;
 

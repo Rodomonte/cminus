@@ -1,4 +1,4 @@
-// NUM UNIT TEST
+// NUM TEST
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -162,7 +162,18 @@ int main(){
   assert(num(0).XOR(7) == 7);
   assert(num(3).XOR(6) == 5);
 
-  // 86-
+  // 86-88
+  printf("^\n");
+
+  assert(num(5).err == NULL);
+  assert((num(5) ^ 0).err == NULL);
+  printf("!!!\n");
+
+  assert((num(5) ^ 0) == 1);
+  // assert((num(5) ^ 1) == 5);
+  // assert((num(5) ^ 3) == 125);
+
+  //
   printf("Complex\n");
   assert((num(1) << 20) - 1 == num((1 << 20) - 1));
 

@@ -10,6 +10,7 @@
 #include "core/stamp.hh"
 #include "core/mem.hh"
 #include "core/num.hh"
+#include "core/frac.hh"
 #include "core/str.hh"
 #include "core/cube.hh"
 #include "core/thing.hh"
