@@ -44,9 +44,15 @@ struct num : mem {
     len = (size() - 1) * 64 + (64 - i);
   }
 
-  void setbit(int i, llu m, char b){
-    if(!b && (at(i) & m)) (*this)[i] ^= m;
-    else if(b && !(at(i) & m)) (*this)[i] |= m;
+  void setbit(int i, llu m, bool b){
+    while(size() <= i)
+      block.pb(0);
+    if(!b && (at(i) & m)){
+      (*this)[i] ^= m;
+      while(size() && !block.back())
+        block.pop_back();
+    }else if(b && !(at(i) & m)) (*this)[i] |= m;
+    setlen();
   }
 
   void _add(const num& a, const num& b, num* d) const { // a,b > 0
@@ -141,7 +147,11 @@ struct num : mem {
     int i,j;
     num q,r;
     for(i = a.size()-1; i >= 0; --i){
-      for(j = 0; j < 64; ++j){
+      j = 0;
+      if(i == a.size()-1)
+        while(!(a.at(i) & (1LLU << j)))
+          ++j;
+      for(; j < 64; ++j){
         r <<= 1;
         r.setbit(0, 1LLU << 63, a.at(i) & (1LLU << j));
         if(r >= b) r -= b, q.setbit(i, 1LLU << j, 1);
@@ -175,7 +185,6 @@ struct num : mem {
       s *= s, t >>= 1;
     }
     *d = r;
-    printf("Returning %d\n", d->_int());
   }
 
   // Actually shifts right due to little-endianness
@@ -318,36 +327,21 @@ struct num : mem {
   bool operator<=(const num& o) const { return !(*this > o); }
   bool operator>=(const num& o) const { return !(*this < o); }
 
-  bool operator==(ll n) const { return *this == num(n); }
-  bool operator!=(ll n) const { return *this != num(n); }
-  bool operator<(ll n) const { return *this < num(n); }
-  bool operator>(ll n) const { return *this > num(n); }
-  bool operator<=(ll n) const { return *this <= num(n); }
-  bool operator>=(ll n) const { return *this >= num(n); }
-
   num& operator=(const num& o){
-    printf("1\n");
     neg = o.neg;
-    if(o.err)
-      printf("o=%d\n", o._int()), cl_num.pb(*(o.err)), err = &cl_num.back();
-    printf("2\n");
+    if(o.err) cl_num.pb(*(o.err)), err = &cl_num.back();
+    else err = NULL;
     block = o.block;
     len = o.len;
-    printf("3\n");
     return *this;
   }
 
   num& operator=(ll n){
-    printf("11\n");
     clear();
-    printf("22\n");
     err = NULL;
     neg = (n < 0);
-    printf("33\n");
     (*this)[0] = rev(absl(n));
-    printf("44\n");
     setlen();
-    printf("55\n");
     return *this;
   }
 
@@ -431,22 +425,10 @@ struct num : mem {
     return *this;
   }
 
-  num& operator+=(ll v){ *this += num(v); return *this; }
-  num& operator-=(ll v){ *this -= num(v); return *this; }
-  num& operator*=(ll v){ *this *= num(v); return *this; }
-  num& operator/=(ll v){ *this /= num(v); return *this; }
-  num& operator%=(ll v){ *this %= num(v); return *this; }
-  num& operator^=(ll v){ *this ^= num(v); return *this; }
-
   num& operator++(){ return *this += 1; }
   num operator++(int u){ num r(*this); *this += 1; return r; }
   num& operator--(){ return *this -= 1; }
   num operator--(int u){ return *this - 1; }
-
-  num& operator<<=(ll v){ *this <<= num(v); return *this; }
-  num& operator>>=(ll v){ *this >>= num(v); return *this; }
-  num& operator&=(ll v){ *this &= num(v); return *this; }
-  num& operator|=(ll v){ *this |= num(v); return *this; }
 
   num operator+(const num& o) const { num n(*this); n += o; return n; }
   num operator-(const num& o) const { num n(*this); n -= o; return n; }
@@ -477,6 +459,27 @@ struct num : mem {
       n[i] = ~n[i];
     return n;
   }
+
+  // Primitive operand
+
+  bool operator==(ll n) const { return *this == num(n); }
+  bool operator!=(ll n) const { return *this != num(n); }
+  bool operator<(ll n) const { return *this < num(n); }
+  bool operator>(ll n) const { return *this > num(n); }
+  bool operator<=(ll n) const { return *this <= num(n); }
+  bool operator>=(ll n) const { return *this >= num(n); }
+
+  num& operator+=(ll v){ *this += num(v); return *this; }
+  num& operator-=(ll v){ *this -= num(v); return *this; }
+  num& operator*=(ll v){ *this *= num(v); return *this; }
+  num& operator/=(ll v){ *this /= num(v); return *this; }
+  num& operator%=(ll v){ *this %= num(v); return *this; }
+  num& operator^=(ll v){ *this ^= num(v); return *this; }
+
+  num& operator<<=(ll v){ *this <<= num(v); return *this; }
+  num& operator>>=(ll v){ *this >>= num(v); return *this; }
+  num& operator&=(ll v){ *this &= num(v); return *this; }
+  num& operator|=(ll v){ *this |= num(v); return *this; }
 
   num operator+(ll v) const { num n(*this); n += num(v); return n; }
   num operator-(ll v) const { num n(*this); n -= num(v); return n; }

@@ -164,29 +164,27 @@ int main(){
 
   // 86-88
   printf("^\n");
-
-  assert(num(5).err == NULL);
-  assert((num(5) ^ 0).err == NULL);
-  printf("!!!\n");
-
   assert((num(5) ^ 0) == 1);
-  // assert((num(5) ^ 1) == 5);
-  // assert((num(5) ^ 3) == 125);
+  assert((num(5) ^ 1) == 5);
+  assert((num(5) ^ 3) == 125);
 
-  //
+  // 89-
   printf("Complex\n");
   assert((num(1) << 20) - 1 == num((1 << 20) - 1));
+
 
   printf("\nBig numbers\n");
   a = (1LLU << 62) + (1LLU << 20);
   b = (1LLU << 62);
   c = (num(1) << 124);
+  d = (num(1) << 124) + (num(1) << 83) + (num(1) << 40);
 
   printf("*\n");
-  assert(a * a == (num(1) << 124) + (num(1) << 83) + (num(1) << 40));
+  assert(a * a == d);
   assert(b * b == c);
 
   printf("/\n");
+  assert(d / a == a);
   assert(c / b == b);
 
   return 0;
