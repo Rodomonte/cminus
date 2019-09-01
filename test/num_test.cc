@@ -1,8 +1,7 @@
 // NUM TEST
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "../cminus.hh"
+
 
 int main(){
   ASSERT = 0;
@@ -168,7 +167,15 @@ int main(){
   assert((num(5) ^ 1) == 5);
   assert((num(5) ^ 3) == 125);
 
-  // 89-
+  //
+  printf("gcd\n");
+  assert(num(12).gcd(num(18)) == 6);
+
+  //
+  printf("lcm\n");
+  assert(num(10).lcm(num(6)) == 30);
+
+  //
   printf("Complex\n");
   assert((num(1) << 20) - 1 == num((1 << 20) - 1));
 

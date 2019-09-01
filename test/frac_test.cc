@@ -1,19 +1,21 @@
 // FRAC TEST
 
-#include <stdio.h>
 #include "../cminus.hh"
+
 
 int main(){
   ASSERT = 0;
   printf("\nOperator Test:\n");
 
-  printf("=\n");
-  frac a,b,c;
-  a = 2;
-  b = num(5);
-  c = a;
+  printf("()\n");
+  frac a(2);
+  frac b(num(5));
+  frac c(a);
 
   printf("==\n");
+  assert(a == c);
+  assert(a == 2);
+  assert(b == num(5));
 
   return 0;
 }

@@ -14,7 +14,7 @@ struct num : mem {
 
   num(){ *this = 0; }
   num(ll _num){ *this = _num; }
-  num(const num& o){ *this = o; }
+  num(const num& _num){ *this = _num; }
 
   virtual num* clone() const { cl_num.pb(*this); return &cl_num.back(); }
   virtual str serialize() const { return ""; } //!
@@ -284,6 +284,18 @@ struct num : mem {
     d->setlen();
   }
 
+  num gcd(const num& o) const { return o() ? o.gcd(*this % o) : *this; }
+  num lcm(const num& o) const { return *this / gcd(o) * o; }
+
+  num& operator=(const num& o){
+    neg = o.neg;
+    if(o.err) cl_num.pb(*(o.err)), err = &cl_num.back();
+    else err = NULL;
+    block = o.block;
+    len = o.len;
+    return *this;
+  }
+
   bool operator()() const { return *this != 0; }
   bool operator==(const num& o) const {
     if(neg != o.neg || len != o.len) return false;
@@ -326,24 +338,6 @@ struct num : mem {
   bool operator>(const num& o) const { return !(*this < o) && !(*this == o); }
   bool operator<=(const num& o) const { return !(*this > o); }
   bool operator>=(const num& o) const { return !(*this < o); }
-
-  num& operator=(const num& o){
-    neg = o.neg;
-    if(o.err) cl_num.pb(*(o.err)), err = &cl_num.back();
-    else err = NULL;
-    block = o.block;
-    len = o.len;
-    return *this;
-  }
-
-  num& operator=(ll n){
-    clear();
-    err = NULL;
-    neg = (n < 0);
-    (*this)[0] = rev(absl(n));
-    setlen();
-    return *this;
-  }
 
   num& operator+=(const num& o){
     if(neg && !o.neg){
@@ -461,6 +455,15 @@ struct num : mem {
   }
 
   // Primitive operand
+
+  num& operator=(ll n){
+    clear();
+    err = NULL;
+    neg = (n < 0);
+    (*this)[0] = rev(absl(n));
+    setlen();
+    return *this;
+  }
 
   bool operator==(ll n) const { return *this == num(n); }
   bool operator!=(ll n) const { return *this != num(n); }
