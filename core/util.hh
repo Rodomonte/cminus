@@ -32,12 +32,8 @@ void kill(const char* e){
   exit(1);
 }
 
-int ASSERT;
 bool assert(bool b){
-  if(!b){
-    printf("After %d success:\n", ASSERT);
-    kill("Assertion failed");
-  }else ++ASSERT;
+  if(!b) kill("Assertion failed");
 }
 
 

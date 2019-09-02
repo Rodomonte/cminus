@@ -14,15 +14,15 @@ struct mem : type {
   virtual mem* clone() const { cl_mem.pb(*this); return &cl_mem.back(); }
   virtual void clear(){ block.clear(), block.pb(0); }
 
-  virtual int size() const { return block.size(); }
-  llu back() const { return block.back(); }
-
   //!
   virtual str _string() const { return ""; }
   virtual str serialize() const { return ""; }
 
+  virtual int size() const { return block.size(); }
   llu& operator[](int i){ return block[i]; }
+  llu back() const { return block.back(); }
   llu at(int i) const { return block[i]; }
+
   char bit_at(int i) const {
     return (block[i>>6] & (1LLU << (63 - (i & 0x3F)))) ? 1 : 0;
   }
