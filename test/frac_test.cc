@@ -75,9 +75,7 @@ int main(){
 
   printf("--()\n");
   assert(--a == 3);
-  printf("----\n");
   assert(--b == frac(5, 3));
-  printf("----\n");
   assert(--frac(0) == -1);
 
   printf("()--\n");

@@ -57,20 +57,13 @@ struct frac : num {
   bool operator<=(const frac& o) const { return !(*this > o); }
   bool operator>=(const frac& o) const { return !(*this < o); }
 
-  frac& operator++(){
-    printf("++\n%s\n", _string().c_str());
-    *this += 1;
-    printf("-> %s\n", _string().c_str());
-    return *this; }
-    //return *this += 1; } // pre
+  frac& operator++(){ return *this += 1; } // pre
   frac operator++(int u){ frac r(*this); *this += 1; return r; } // post
   frac& operator--(){ return *this -= 1; } // pre
   frac operator--(int u){ frac r(*this); *this -= 1; return r; } // post
 
   frac& operator+=(const frac& o){
     num m = den.lcm(o.den);
-    printf("m = %s\n", m._string().c_str());
-    printf("-1? %s\n", num::operator*(m / den)._string().c_str());
     num::operator=(num::operator*(m / den) + o.num::operator*(m / o.den));
     den = m, fix();
     return *this;
@@ -78,7 +71,6 @@ struct frac : num {
 
   frac& operator-=(const frac& o){
     num m = den.lcm(o.den);
-    printf("m = %s\n", m._string().c_str());
     num::operator=(num::operator*(m / den) - o.num::operator*(m / o.den));
     den = m, fix();
     return *this;

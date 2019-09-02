@@ -57,7 +57,7 @@ struct num : mem {
     while(size() > 1 && !back())
       block.pop_back();
     setlen();
-    if(!(*this)) neg = false;
+    if(size() == 1 && at(0) == 0) neg = false;
   }
 
   void setlen(){
@@ -422,7 +422,7 @@ struct num : mem {
     num _o(o);
     neg = _o.neg = false;
     _div(*this, _o, this);
-    neg = _neg;
+    neg = *this != 0 && _neg;
     return *this;
   }
 
@@ -432,7 +432,7 @@ struct num : mem {
     num _o(o);
     neg = _o.neg = false;
     _mod(*this, _o, this);
-    neg = _neg;
+    neg = *this != 0 && _neg;
     return *this;
   }
 
@@ -470,18 +470,9 @@ struct num : mem {
     return *this;
   }
 
-  num operator+(const num& o) const {
-    printf("+ %s\n", _string().c_str());
-    printf("+ %s\n", o._string().c_str());
-    num n(*this); n += o; return n; }
-  num operator-(const num& o) const {
-    printf("- %s\n", _string().c_str());
-    printf("- %s\n", o._string().c_str());
-    num n(*this); n -= o; return n; }
-  num operator*(const num& o) const {
-    printf("* %s\n", _string().c_str());
-    printf("* %s\n", o._string().c_str());
-    num n(*this); n *= o; return n; }
+  num operator+(const num& o) const { num n(*this); n += o; return n; }
+  num operator-(const num& o) const { num n(*this); n -= o; return n; }
+  num operator*(const num& o) const { num n(*this); n *= o; return n; }
   num operator/(const num& o) const { num n(*this); n /= o; return n; }
   num operator%(const num& o) const { num n(*this); n %= o; return n; }
   num operator^(const num& o) const { num n(*this); n ^= o; return n; }
