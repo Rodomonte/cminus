@@ -134,6 +134,20 @@ int main(){
   assert((a /= b) == b);
   assert((d /= 9) == c);
 
+  printf("%%\n");
+  //!
+
+  printf("%%=\n");
+  //!
+
+  printf("^\n");
+  assert((num(5) ^ 0) == 1);
+  assert((num(5) ^ 1) == 5);
+  assert((num(5) ^ 3) == 125);
+
+  printf("^=\n");
+  //!
+
   printf("<<\n");
   assert((a << 1) == c);
   assert((a << 2) == (c << 1));
@@ -154,18 +168,19 @@ int main(){
   assert((num(5) & 12) == 4);
   assert((num(1) & 4) == 0);
 
+  printf("&=\n");
+  //!
+
   printf("|\n");
   assert((num(1) | 4) == 5);
   assert((num(0) | 7) == 7);
 
+  printf("|=\n");
+  //!
+
   printf("XOR\n");
   assert(num(0).XOR(7) == 7);
   assert(num(3).XOR(6) == 5);
-
-  printf("^\n");
-  assert((num(5) ^ 0) == 1);
-  assert((num(5) ^ 1) == 5);
-  assert((num(5) ^ 3) == 125);
 
   printf("gcd\n");
   assert(num(12).gcd(num(18)) == 6);
@@ -190,6 +205,9 @@ int main(){
   printf("/\n");
   assert(d / a == a);
   assert(c / b == b);
+
+  printf("%%\n");
+  //!
 
   return 0;
 }

@@ -83,5 +83,37 @@ int main(){
   assert(a == 2);
   assert(frac(0)-- == 0);
 
+  printf("+\n");
+
+  printf("+=\n");
+  assert((frac(1, 3) += frac(2, 3)) == 1);
+
+  printf("-\n");
+
+  printf("-=\n");
+  assert((frac(1) -= frac(1, 3)) == frac(2, 3));
+
+  printf("*\n");
+
+  printf("*=\n");
+  assert((frac(2, 3) *= frac(3, 4)) == frac(1, 2));
+
+  printf("/\n");
+
+  printf("/=\n");
+  assert((frac(1, 2) /= frac(2, 3)) == frac(3, 4));
+
+  printf("%%\n");
+
+  printf("%%=\n");
+
+  printf("<<\n");
+
+  printf("<<=\n");
+
+  printf(">>\n");
+
+  printf(">>=\n");
+
   return 0;
 }

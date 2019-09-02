@@ -65,15 +65,35 @@ struct frac : num {
   frac& operator+=(const frac& o){
     num m = den.lcm(o.den);
     num::operator=(num::operator*(m / den) + o.num::operator*(m / o.den));
-    den = m, fix();
+    den = m;
+    fix();
     return *this;
   }
 
   frac& operator-=(const frac& o){
     num m = den.lcm(o.den);
     num::operator=(num::operator*(m / den) - o.num::operator*(m / o.den));
-    den = m, fix();
+    den = m;
+    fix();
     return *this;
+  }
+
+  frac& operator*=(const frac& o){
+    num::operator*=((num)o);
+    den *= o.den;
+    fix();
+    return *this;
+  }
+
+  frac& operator/=(const frac& o){
+    num::operator*=(o.den);
+    den *= (num)o;
+    fix();
+    return *this;
+  }
+
+  frac& operator%=(const frac& o){
+    //!
   }
 };
 
