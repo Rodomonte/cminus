@@ -13,6 +13,7 @@
 #define umap std::unordered_map
 #define iter iterator
 
+#define gc getchar_unlocked
 #define pb push_back
 #define pf push_front
 #define popb pop_back

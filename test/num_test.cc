@@ -135,10 +135,12 @@ int main(){
   assert((d /= 9) == c);
 
   printf("%%\n");
-  //!
+  assert(num(4) % 3 == 1);
+  assert(num(4) % 5 == 4);
 
   printf("%%=\n");
-  //!
+  assert((num(4) %= 3) == 1);
+  assert((num(4) %= 5) == 4);
 
   printf("^\n");
   assert((num(5) ^ 0) == 1);
@@ -146,7 +148,9 @@ int main(){
   assert((num(5) ^ 3) == 125);
 
   printf("^=\n");
-  //!
+  assert((num(5) ^= 0) == 1);
+  assert((num(5) ^= 1) == 5);
+  assert((num(5) ^= 3) == 125);
 
   printf("<<\n");
   assert((a << 1) == c);
@@ -169,28 +173,31 @@ int main(){
   assert((num(1) & 4) == 0);
 
   printf("&=\n");
-  //!
+  assert((num(5) &= 12) == 4);
+  assert((num(1) &= 4) == 0);
 
   printf("|\n");
   assert((num(1) | 4) == 5);
   assert((num(0) | 7) == 7);
 
   printf("|=\n");
-  //!
+  assert((num(1) |= 4) == 5);
+  assert((num(0) |= 7) == 7);
 
   printf("XOR\n");
   assert(num(0).XOR(7) == 7);
   assert(num(3).XOR(6) == 5);
 
   printf("gcd\n");
-  assert(num(12).gcd(num(18)) == 6);
+  assert(num(12).gcd(18) == 6);
+  assert(num(1).gcd(7) == 1);
 
   printf("lcm\n");
   assert(num(10).lcm(num(6)) == 30);
+  assert(num(1).lcm(7) == 7);
 
   printf("Complex\n");
   assert((num(1) << 20) - 1 == num((1 << 20) - 1));
-
 
   printf("\nBig numbers\n");
   a = (1LLU << 62) + (1LLU << 20);
@@ -207,7 +214,8 @@ int main(){
   assert(c / b == b);
 
   printf("%%\n");
-  //!
+  assert(c % b == 0);
+  assert(d % a == 0);
 
   return 0;
 }

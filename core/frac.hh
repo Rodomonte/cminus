@@ -10,14 +10,12 @@ struct frac : num {
   num den;
 
   frac(){ *this = 0; }
-  frac(ll _num){ *this = _num; }
-  frac(const num& _num){ *this = _num; }
-  frac(const num& _num, const num& _den): den(_den) {
-    num::operator=(_num), reduce();
-  }
-  frac(const frac& _frac){ *this = _frac; }
+  frac(ll n){ *this = num(n); }
+  frac(const num& n){ *this = n; }
+  frac(const num& n, const num& d): den(d) { num::operator=(n), reduce(); }
+  frac(const frac& f){ *this = f; }
 
-  frac& operator=(ll n){ num::operator=(n), den = 1; }
+  frac& operator=(ll n){ return (*this = num(n)); }
   frac& operator=(const num& n){ num::operator=(n), den = 1; }
   frac& operator=(const frac& o){ num::operator=(o), den = o.den; }
 
@@ -39,10 +37,19 @@ struct frac : num {
     den /= g;
   }
 
+  num abs() const { frac r(*this); r.neg = false; return r; }
+
+  num floor(){
+    return this->num::operator/(den);
+  }
+
+  num ceil(){
+
+  }
+
   bool operator()() const { return *this != 0; }
   bool operator!() const { return *this == 0; }
   frac operator-() const { return frac(num::operator-(), den); }
-  frac operator~() const { return frac(num::operator~(), ~den); }
 
   bool operator==(const frac& o) const {
     return num::operator==(o) && den == o.den;
@@ -81,6 +88,7 @@ struct frac : num {
   frac& operator*=(const frac& o){
     num::operator*=((num)o);
     den *= o.den;
+    if(o.neg) neg = !neg;
     fix();
     return *this;
   }
@@ -95,6 +103,31 @@ struct frac : num {
   frac& operator%=(const frac& o){
     //!
   }
+
+  frac& operator^=(const frac& o){
+    //!
+  }
+
+  frac& operator<<=(const frac& o){
+    //!
+  }
+
+  frac& operator>>=(const frac& o){
+    //!
+  }
+
+  frac operator+(const frac& o) const { frac n(*this); n += o; return n; }
+  frac operator-(const frac& o) const { frac n(*this); n -= o; return n; }
+  frac operator*(const frac& o) const { frac n(*this); n *= o; return n; }
+  frac operator/(const frac& o) const { frac n(*this); n /= o; return n; }
+  frac operator%(const frac& o) const { frac n(*this); n %= o; return n; }
+  frac operator^(const frac& o) const { frac n(*this); n ^= o; return n; }
+
+  frac operator<<(const frac& o) const { frac n(*this); n <<= o; return n; }
+  frac operator>>(const frac& o) const { frac n(*this); n >>= o; return n; }
+
+  bool operator&&(const frac& o) const { return *this != 0 && o != 0; }
+  bool operator||(const frac& o) const { return *this != 0 || o != 0; }
 };
 
 

@@ -307,8 +307,9 @@ struct num : mem {
     d->fix();
   }
 
-  num gcd(const num& o) const { return o() ? o.gcd(*this % o) : *this; }
-  num lcm(const num& o) const { return *this / gcd(o) * o; }
+  virtual num abs() const { num r(*this); r.neg = false; return r; }
+  num gcd(const num& o) const { return (o() ? o.gcd(*this % o) : *this).abs(); }
+  num lcm(const num& o) const { return (*this / gcd(o) * o).abs(); }
 
   bool operator()() const { return *this != 0; }
   bool operator!() const { return *this == 0; }

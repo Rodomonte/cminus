@@ -15,5 +15,8 @@
 #include "core/cube.hh"
 #include "core/thing.hh"
 
+#include "net/client.hh"
+#include "net/server.hh"
+
 
 #endif

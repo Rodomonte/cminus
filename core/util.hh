@@ -6,14 +6,19 @@
 #include "def.hh"
 
 
-//------------------------ CONSTANTS ------------------------//
+// DATA
+
+char buf[10485760];
+
+
+// CONSTANTS
 
 const double PI = atan(1) * 4;
 const double PI2 = PI * 2;
 const double PID2 = PI / 2;
 
 
-//------------------------ METHODS ------------------------//
+// METHODS
 
 int abs(int a){ return (a < 0) ? -a : a; }
 int min(int a, int b){ return (a < b) ? a : b; }

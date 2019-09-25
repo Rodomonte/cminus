@@ -13,25 +13,24 @@ int main(){
 
   printf("=\n");
   a = 2;
-  c = a;
   b = frac(5, 3);
+  c = a;
 
   printf("==\n");
   assert(a == a);
-  assert(a == c);
-  assert(!(a == b));
   assert(a == 2);
-  assert(!(b == 5));
-  assert(b == frac(5, 3));
-  assert(b == frac(10, 6));
+  assert(a == frac(4, 2));
+  assert(a == frac(-4, -2));
+  assert(!(a == -2));
+  assert(a == c);
 
   printf("!=\n");
   assert(!(a != a));
-  assert(a != num(1));
+  assert(!(a != num(2)));
+  assert(a != frac(2, 2));
+  assert(a != frac(-2, 1));
   assert(a != b);
   assert(!(a != c));
-  assert(b != 5);
-  assert(!(b != frac(10, 6)));
 
   printf("<\n");
   assert(!(a < a));
@@ -84,21 +83,39 @@ int main(){
   assert(frac(0)-- == 0);
 
   printf("+\n");
+  assert(frac(1, 3) + frac(2, 3) == 1);
+  assert(frac(-1, 3) + frac(1, 3) == 0);
+  assert(frac(-1, 3) + frac(-2, 3) == -1);
 
   printf("+=\n");
   assert((frac(1, 3) += frac(2, 3)) == 1);
+  assert((frac(-1, 3) += frac(1, 3)) == 0);
+  assert((frac(-1, 3) += frac(-2, 3)) == -1);
 
   printf("-\n");
+  assert(frac(4, 3) - frac(1, 3) == 1);
+  assert(frac(1, 3) - frac(1, 3) == 0);
+  assert(frac(-1, 3) - frac(2, 3) == -1);
 
   printf("-=\n");
   assert((frac(1) -= frac(1, 3)) == frac(2, 3));
+  assert((frac(1, 3) -= frac(1, 3)) == 0);
+  assert((frac(-1, 3) -= frac(2, 3)) == -1);
 
   printf("*\n");
+  assert(frac(2, 3) * frac(3, 4) == frac(1, 2));
+  printf("%s\n", (frac(-2, 3) * frac(3, 4))._string().c_str());
+  printf("%s\n", frac(-1, 2)._string().c_str());
+  assert(frac(-2, 3) * frac(3, 4) == frac(-1, 2));
+  assert(frac(-2, 3) * frac(-3, 4) == frac(1, 2));
 
   printf("*=\n");
   assert((frac(2, 3) *= frac(3, 4)) == frac(1, 2));
+  assert((frac(-2, 3) *= frac(3, 4)) == frac(-1, 2));
+  assert((frac(-2, 3) *= frac(-3, 4)) == frac(1, 2));
 
   printf("/\n");
+  assert(frac(1, 2) / frac(2, 3) == frac(3, 4));
 
   printf("/=\n");
   assert((frac(1, 2) /= frac(2, 3)) == frac(3, 4));
@@ -107,6 +124,10 @@ int main(){
 
   printf("%%=\n");
 
+  printf("^\n");
+
+  printf("^=\n");
+
   printf("<<\n");
 
   printf("<<=\n");
@@ -114,6 +135,13 @@ int main(){
   printf(">>\n");
 
   printf(">>=\n");
+
+  printf("floor\n");
+  assert(frac(1, 2).floor() == 0);
+  assert(frac(2, 2).floor() == 1);
+  assert(frac(3, 2).floor() == 1);
+
+  printf("ceil\n");
 
   return 0;
 }
