@@ -23,7 +23,7 @@ struct server {
     if(listen(socket_id, 5) != 0)
       kill("Could not verify socket connection");
     len = sizeof(cli_addr);
-    if(accept(socket_id, (struct sockaddr*)&cli_addr, &len) < 0)
+    if((socket_id = accept(socket_id, (struct sockaddr*)&cli_addr, &len)) < 0)
       kill("Could not accept connection verification");
 
     while(1){
@@ -32,7 +32,7 @@ struct server {
       printf("server > ");
       i = 0;
       while((buf[i++] = gc()) != '\n');
-      write(socket_id, buf, sizeof(buf));
+      write(socket_id, buf, strlen(buf));
     }
   }
 };

@@ -27,7 +27,7 @@ struct client {
       printf("client > ");
       i = 0;
       while((buf[i++] = gc()) != '\n');
-      write(socket_id, buf, sizeof(buf));
+      write(socket_id, buf, strlen(buf));
       read(socket_id, buf, sizeof(buf));
       printf("server > %s\n", buf);
     }
