@@ -1,5 +1,7 @@
 // NUM TEST
 
+#include <stdio.h>
+
 #include "../cminus.hh"
 
 

@@ -6,6 +6,8 @@
 #include "../core/util.hh"
 
 
+#define PORT 65432
+
 struct server {
   int id, socket_id;
   server(int _id): id(_id) {}
@@ -17,7 +19,7 @@ struct server {
     if(socket_id == -1) kill("Could not create socket");
     srv_addr.sin_family = AF_INET;
     srv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    srv_addr.sin_port = htons(8080);
+    srv_addr.sin_port = htons(PORT);
     if(bind(socket_id, (struct sockaddr*)&srv_addr, sizeof(srv_addr)) != 0)
       kill("Could not bind socket");
     if(listen(socket_id, 5) != 0)
@@ -25,13 +27,15 @@ struct server {
     len = sizeof(cli_addr);
     if((socket_id = accept(socket_id, (struct sockaddr*)&cli_addr, &len)) < 0)
       kill("Could not accept connection verification");
+    inet_ntop(AF_INET, &cli_addr.sin_addr, buf, INET_ADDRSTRLEN);
+    printf("%s connected\n", buf);
 
     while(1){
       read(socket_id, buf, sizeof(buf));
       printf("client > %s\n", buf);
       printf("server > ");
       i = 0;
-      while((buf[i++] = gc()) != '\n');
+      while((buf[i++] = getchar()) != '\n');
       write(socket_id, buf, strlen(buf));
     }
   }

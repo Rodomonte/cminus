@@ -3,42 +3,31 @@
 #ifndef util_hh
 #define util_hh
 
-#include "def.hh"
+#include "incl.hh"
 
 
-// DATA
+#define llu unsigned long long
+#define uset std::unordered_set
+#define umap std::unordered_map
+#define iter iterator
+
+#define INT_MIN -2147483647
+#define INT_MAX 2147483647
+#define LLU_MAX 18446744073709551615LLU
+#define DBL_MIN -1.79769e+308
+#define DBL_MAX 1.79769e+308
+
 
 char buf[10485760];
 
 
-// CONSTANTS
+#define kill(e) \
+  printf("ERR in %s:%s: %s\n", __FILE__, __FUNCTION__, e); exit(1);
+#define assert(b) if(!b) kill("Assertion failed");
 
-const double PI = atan(1) * 4;
-const double PI2 = PI * 2;
-const double PID2 = PI / 2;
-
-
-// METHODS
-
-int abs(int a){ return (a < 0) ? -a : a; }
-int min(int a, int b){ return (a < b) ? a : b; }
-int max(int a, int b){ return (a > b) ? a : b; }
-
-ll absl(ll a){ return (a < 0) ? -a : a; }
-ll minl(ll a, ll b){ return (a < b) ? a : b; }
-ll maxl(ll a, ll b){ return (a > b) ? a : b; }
-
-double absd(double a){ return (a < 0) ? -a : a; }
-double mind(double a, double b){ return (a < b) ? a : b; }
-double maxd(double a, double b){ return (a > b) ? a : b; }
-
-void kill(const char* e){
-  printf("ERR: %s\n", e);
-  exit(1);
-}
-
-bool assert(bool b){
-  if(!b) kill("Assertion failed");
+void call(const char* cmd){
+  int r = system(cmd);
+  assert(WIFEXITED(r) && !WEXITSTATUS(r));
 }
 
 

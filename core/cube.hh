@@ -4,7 +4,6 @@
 #ifndef cube_hh
 #define cube_hh
 
-#include "glb.hh"
 #include "util.hh"
 
 

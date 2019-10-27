@@ -1,13 +1,12 @@
 #ifndef vec_hh
 #define vec_hh
 
-#include <vector>
-
-#include "def.hh"
+#include "incl.hh"
 
 
-template<typename T>
-struct vec : public std::vector<T> {
+template<class T>
+struct vec : std::vector<T> {
+  vec<T>& operator+=(const T& t){ this->push_back(t); return *this; }
   vec<T>& operator+=(const vec<T>& o){
     int i;
     for(i = 0; i < o.size(); ++i)

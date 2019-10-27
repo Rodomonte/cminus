@@ -5,6 +5,8 @@
 
 #include "mem.hh"
 
+#define SHIFT_MAX 100000000
+
 
 // Little-endian
 struct num : mem {

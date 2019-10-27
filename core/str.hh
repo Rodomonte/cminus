@@ -3,9 +3,7 @@
 #ifndef str_hh
 #define str_hh
 
-#include <string>
-
-#include "glb.hh"
+#include "incl.hh"
 
 
 struct str /*: std::string*/ {

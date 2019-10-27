@@ -18,8 +18,6 @@ struct Thing : type { // ABSTRACT
     creation = last_upd = clock();
   }
 
-  virtual Thing* clone() const { cl_thing.pb(*this); return &cl_thing.back(); }
-
   //!
   virtual str _string() const { return ""; }
   virtual str serialize() const { return ""; }

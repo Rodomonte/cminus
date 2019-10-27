@@ -7,10 +7,10 @@
 
 
 struct stamp : type {
-  ll clock;
+  llu clock;
 
   stamp(){}
-  stamp(ll _clock): clock(_clock) {}
+  stamp(llu _clock): clock(_clock) {}
 
   virtual stamp* clone() const { cl_stamp.pb(*this); return &cl_stamp.back(); }
 

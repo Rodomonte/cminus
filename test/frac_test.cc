@@ -1,5 +1,7 @@
 // FRAC TEST
 
+#include <stdio.h>
+
 #include "../cminus.hh"
 
 
