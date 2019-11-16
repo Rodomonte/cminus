@@ -1,5 +1,7 @@
 // NUM
 
+//! (n<<3)+(n<<1) == n*10
+
 #ifndef num_hh
 #define num_hh
 
